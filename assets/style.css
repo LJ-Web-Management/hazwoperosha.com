@@ -95,18 +95,8 @@ td a { font-weight: 700; }
 .card-actions { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .card .btn { padding: 8px 12px; font-size: .9rem; }
 
-/* bundle */
-.bundle { background: var(--dark); color: #fff; padding: 56px 0; }
-.bundle .eyebrow { color: #d4d4d8; }
-.bundle-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center; }
-.bundle-card { background: #fff; color: var(--fg); border-radius: var(--radius); padding: 26px; display: grid; gap: 12px; box-shadow: 8px 8px 0 var(--accent); }
-.bundle-card p { margin: 0; }
-.bundle-price { font-size: 2.6rem; font-weight: 800; }
-.bundle-price span { font-size: 1rem; font-weight: 600; color: var(--muted); }
-.bundle-card .btn { text-align: center; }
 .checks { list-style: none; padding: 0; }
 .checks li { margin: 6px 0; }
-.bundle .checks li::before { border-color: #fff; }
 
 /* about / faq */
 .about { padding: 56px 16px; }
@@ -149,7 +139,7 @@ details p { margin: 0 0 14px; color: #3f3f46; }
 .legal { border-top: 1px solid #27272a; margin-top: 28px; padding-top: 16px; font-size: .85rem; }
 
 @media (max-width: 860px) {
-  .hero-grid, .bundle-grid, .cols, .course-hero, .footer-grid { grid-template-columns: 1fr; }
+  .hero-grid, .cols, .course-hero, .footer-grid { grid-template-columns: 1fr; }
   .buy { position: static; }
   header nav a:not(.nav-phone) { display: none; }
   .search { justify-content: flex-start; }

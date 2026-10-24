@@ -11,7 +11,7 @@ Live: https://lj-web-management.github.io/website-staging/
 ```
 data/source.json     course data (from the HAZWOPER OSHA master course catalog)
 tools/build.js       generator - run `node tools/build.js` after editing data or copy
-index.html           generated hub page (course list, which-course guide, bundle, FAQ)
+index.html           generated hub page (course list, which-course guide, FAQ)
 courses/<slug>/      generated per-course pages
 sitemap.xml, robots.txt, llms.txt, 404.html   generated SEO / AI-crawler files
 checkout.html        generated checkout page (noindex)
@@ -33,7 +33,7 @@ payment method, then the page calls `https://hazwoper-osha.com/api/add_new_user`
 tiers are set at the top of `tools/build.js`, which generates `assets/config.js`.
 
 Card checkout is used for a course only when it has an LMS id in `data/lms-ids.json`.
-Courses still set to `null`, and the bundle, go by enrollment-request email to
+Courses still set to `null` go by enrollment-request email to
 info@hazwoper-osha.com instead. To turn on card checkout for a course, fill in its LMS id and
 run `node tools/build.js`.
 

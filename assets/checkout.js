@@ -3,8 +3,8 @@
 //   1. Stripe.js creates a card PaymentMethod
 //   2. POST {API_BASE_URL}/add_new_user  -> customer id
 //   3. POST {API_BASE_URL}/add_order     -> order (+ clientSecret to confirm, if the API asks)
-// Courses without an LMS id (assets/config.js, from data/lms-ids.json) and the
-// bundle go by enrollment-request email instead, like bundles on datacentertraining.us.
+// Courses without an LMS id (assets/config.js, from data/lms-ids.json) go by
+// enrollment-request email instead.
 document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('stripeCheckoutForm');
   if (!form) return;
@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', function () {
   var params = new URLSearchParams(window.location.search);
   var itemSlug = params.get('item') || 'osha-40-hour-hazwoper-training';
   var selected = findHzItem(itemSlug) || findHzItem((itemSlug = 'osha-40-hour-hazwoper-training'));
-  var courseIds = selected.type === 'course' ? [selected.courseId] : selected.courseIds;
+  var courseIds = [selected.courseId];
 
-  // Card checkout needs an LMS course id for every course in the order; anything
-  // else (the bundle, or a course not mapped yet) is sent as an enrollment request.
-  var requestMode = CHECKOUT_DISABLED || selected.type === 'bundle' || !activeStripeKey() ||
+  // Card checkout needs an LMS course id; a course not mapped yet is sent as an
+  // enrollment request.
+  var requestMode = CHECKOUT_DISABLED || !activeStripeKey() ||
     courseIds.some(function (id) { return !id; });
 
   var seatInput = document.getElementById('seatCount');
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var updateSummary = function () {
     var seats = getSeats();
     var p = priceFor(seats);
-    set('summaryCourseQty', (selected.type === 'bundle' ? 'Per learner / year · ' : '') + seats + (seats === 1 ? ' seat' : ' seats') + ' × $' + formatMoney(selected.price));
+    set('summaryCourseQty', seats + (seats === 1 ? ' seat' : ' seats') + ' × $' + formatMoney(selected.price));
     set('summaryCourseAmount', '$' + formatMoney(p.subtotal));
     set('summarySubtotal', '$' + formatMoney(p.subtotal));
     set('summaryTotal', '$' + formatMoney(p.total));
@@ -102,11 +102,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // ---- page setup ----
   set('summaryCourseName', selected.name);
-  var includesEl = document.getElementById('summaryCourseIncludes');
-  if (includesEl && selected.type === 'bundle') {
-    includesEl.hidden = false;
-    includesEl.textContent = 'Includes ' + selected.includedCount + ' HAZWOPER & RCRA hazardous waste courses.';
-  }
   updateSummary();
   if (seatInput) seatInput.addEventListener('input', updateSummary);
 
@@ -134,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var msg = [
       'Enrollment request from ' + ORDER_FROM,
       '',
-      (selected.type === 'bundle' ? 'Bundle: ' : 'Course: ') + selected.name + ' (' + itemSlug + ')',
+      'Course: ' + selected.name + ' (' + itemSlug + ')',
       'Seats: ' + seats,
       'List price: $' + formatMoney(selected.price) + ' per seat',
       'Estimated total: $' + formatMoney(p.total) + (p.discount > 0 ? ' after ' + Math.round(p.tier.discount * 100) + '% volume discount' : ''),
