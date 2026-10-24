@@ -21,4 +21,4 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://lj-web-management.github.io/website-staging/sitemap.xml
+Sitemap: https://www.hazwoperosha.com/sitemap.xml

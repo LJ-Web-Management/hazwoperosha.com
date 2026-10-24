@@ -4,7 +4,7 @@ Static, SEO-focused landing site listing every HAZWOPER-related course (OSHA 40/
 refresher, supervisor, incident command, first responder, Cal/OSHA, Spanish, RCRA/TSDF,
 micro-modules, train-the-trainer) with a page per course.
 
-Live: https://lj-web-management.github.io/website-staging/
+Live: https://www.hazwoperosha.com/ (custom domain in `CNAME`; `site.config.js` sets the same URL for canonical links, sitemap and structured data)
 
 ## Files
 
