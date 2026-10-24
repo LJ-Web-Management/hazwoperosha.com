@@ -30,7 +30,7 @@ jobs:
       - name: Assemble publish folder
         run: |
           mkdir _site
-          cp -r index.html 404.html robots.txt sitemap.xml llms.txt .nojekyll assets courses _site/
+          cp -r index.html checkout.html 404.html robots.txt sitemap.xml llms.txt .nojekyll assets courses _site/
       - uses: actions/configure-pages@v5
         with:
           enablement: true

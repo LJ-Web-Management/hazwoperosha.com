@@ -15,6 +15,18 @@ const TODAY = new Date().toISOString().slice(0, 10);
 const YEAR = new Date().getFullYear();
 
 const src = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/source.json'), 'utf8'));
+const LMS_IDS = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/lms-ids.json'), 'utf8'));
+
+// Checkout settings - same Stripe account and LMS API as datacentertraining.us (js/config.js there).
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_doCHB0jglD5eISjEmB1vB6mb00xIg51noK';
+const API_BASE_URL = 'https://hazwoper-osha.com/api';
+const ENROLL_EMAIL = 'info@hazwoper-osha.com';
+const ORDER_FROM = 'hazwoper-training-landing';
+const BULK_TIERS = [
+  { min: 1, max: 1, discount: 0 }, { min: 2, max: 10, discount: 0.01 }, { min: 11, max: 20, discount: 0.02 },
+  { min: 21, max: 50, discount: 0.03 }, { min: 51, max: 100, discount: 0.05 }, { min: 101, max: 250, discount: 0.07 },
+  { min: 251, max: 500, discount: 0.08 }, { min: 501, max: 1000, discount: 0.10 },
+];
 
 // ---------- helpers ----------
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -50,7 +62,7 @@ const ORDER = ['OSHA 40 Hour HAZWOPER Training', 'OSHA 24 Hour HAZWOPER Training
 
 const courses = src.courses.map(c => {
   const slug = slugify(c.name);
-  return { ...c, slug, group: groupOf(c), hours: hoursNum(c.duration), url: `${SITE_URL}/courses/${slug}/` };
+  return { ...c, slug, lmsId: LMS_IDS[slug] || null, group: groupOf(c), hours: hoursNum(c.duration), url: `${SITE_URL}/courses/${slug}/` };
 }).sort((a, b) => {
   const ia = ORDER.indexOf(a.name), ib = ORDER.indexOf(b.name);
   if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
@@ -124,7 +136,7 @@ ${extra}
 </header>
 <main id="main">`;
 }
-function foot(depth = 0) {
+function foot(depth = 0, scripts = ['search.js']) {
   const rel = depth ? '../'.repeat(depth) : '';
   return `</main>
 <footer class="site-footer">
@@ -148,14 +160,14 @@ function foot(depth = 0) {
   </div>
   <p class="wrap legal">&copy; ${YEAR} ${BRAND} LLC · All rights reserved</p>
 </footer>
-<script src="${rel}assets/checkout.js" defer></script>
+${scripts.map(f => `<script src="${rel}assets/${f}" defer></script>`).join('\n')}
 </body>
 </html>
 `;
 }
 
-function enrollBtn(c, cls = 'btn') {
-  return `<a class="${cls}" href="${MAIN_SITE}" data-enroll="${c.slug}" data-name="${esc(c.name)}" data-price="${c.price}">Enroll Now · ${money(c.price)}</a>`;
+function enrollBtn(c, cls = 'btn', depth = 0) {
+  return `<a class="${cls}" href="${'../'.repeat(depth)}checkout.html?item=${c.slug}">Enroll Now · ${money(c.price)}</a>`;
 }
 function card(c, depth = 0) {
   const rel = depth ? '../'.repeat(depth) : '';
@@ -163,7 +175,7 @@ function card(c, depth = 0) {
   <div class="card-top"><span class="pill">${esc(c.duration)}</span><span class="price">${money(c.price)}</span></div>
   <h3><a href="${rel}courses/${c.slug}/">${esc(c.name)}</a></h3>
   <p class="cite">${esc(c.citation)}</p>
-  <div class="card-actions">${enrollBtn(c)}<a class="link" href="${rel}courses/${c.slug}/">Details</a></div>
+  <div class="card-actions">${enrollBtn(c, 'btn', depth)}<a class="link" href="${rel}courses/${c.slug}/">Details</a></div>
 </article>`;
 }
 
@@ -289,7 +301,7 @@ function buildIndex() {
     <div class="bundle-card">
       <p class="bundle-price">${money(b.price)}<span>/learner/year</span></p>
       <p>Save ${Math.round(b.savings * 100)}% vs. buying individually</p>
-      <a class="btn btn-lg" href="${MAIN_SITE}" data-enroll="hazwoper-bundle" data-name="${esc(b.name)}" data-price="${b.price}">Get the Bundle</a>
+      <a class="btn btn-lg" href="checkout.html?item=hazwoper-bundle">Get the Bundle</a>
       <a class="btn btn-ghost" href="mailto:${EMAIL}?subject=HAZWOPER%20group%20training%20quote">Request a group quote</a>
     </div>
   </div>
@@ -364,7 +376,7 @@ function buildCourse(c) {
   </div>
   <aside class="buy">
     <p class="buy-price">${money(c.price)}</p>
-    ${enrollBtn(c, 'btn btn-lg btn-block')}
+    ${enrollBtn(c, 'btn btn-lg btn-block', 2)}
     <ul class="checks small">
       <li>Start immediately after checkout</li>
       <li>Progress saves automatically</li>
@@ -452,8 +464,126 @@ ${FAQ.map(([q, a]) => `- **${q}** ${a}`).join('\n')}
   fs.writeFileSync(path.join(ROOT, 'data/courses.json'), JSON.stringify(courses.map(({ slug, name, price, duration, citation, group, url }) => ({ slug, name, price, duration, citation, group, url })), null, 1) + '\n');
 }
 
+// ---------- checkout ----------
+function buildCheckout() {
+  const b = src.bundle;
+  const items = {};
+  courses.forEach(c => { items[c.slug] = { type: 'course', name: c.name, price: c.price, courseId: c.lmsId }; });
+  items['hazwoper-bundle'] = {
+    type: 'bundle', name: b.name, price: b.price, includedCount: b.totalCourses,
+    courseIds: courses.filter(c => c.category === b.scope).map(c => c.lmsId),
+  };
+  fs.writeFileSync(path.join(ROOT, 'assets/config.js'), `// Generated by tools/build.js from data/lms-ids.json - edit those, not this file.
+var STRIPE_PUBLISHABLE_KEY = ${JSON.stringify(STRIPE_PUBLISHABLE_KEY)};
+var API_BASE_URL = ${JSON.stringify(API_BASE_URL)};
+var ENROLL_EMAIL = ${JSON.stringify(ENROLL_EMAIL)};
+var ORDER_FROM = ${JSON.stringify(ORDER_FROM)};
+var PHONE = ${JSON.stringify(PHONE)};
+var PHONE_HREF = ${JSON.stringify(PHONE_HREF.replace('tel:', ''))};
+// true sends every order as an enrollment-request email instead of card checkout.
+var CHECKOUT_DISABLED = false;
+var BULK_TIERS = ${JSON.stringify(BULK_TIERS)};
+var HZ_ITEMS = ${JSON.stringify(items)};
+
+function activeStripeKey() { return STRIPE_PUBLISHABLE_KEY; }
+function findHzItem(slug) { return Object.prototype.hasOwnProperty.call(HZ_ITEMS, slug) ? HZ_ITEMS[slug] : null; }
+function formatMoney(n) { return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function tierForSeats(seats) {
+  for (var i = BULK_TIERS.length - 1; i >= 0; i--) if (seats >= BULK_TIERS[i].min) return BULK_TIERS[i];
+  return BULK_TIERS[0];
+}
+function tierPrice(price, tier) { return Math.round(price * (1 - (tier.discount || 0)) * 100) / 100; }
+`);
+
+  const states = 'AL Alabama|AK Alaska|AZ Arizona|AR Arkansas|CA California|CO Colorado|CT Connecticut|DE Delaware|DC District of Columbia|FL Florida|GA Georgia|HI Hawaii|ID Idaho|IL Illinois|IN Indiana|IA Iowa|KS Kansas|KY Kentucky|LA Louisiana|ME Maine|MD Maryland|MA Massachusetts|MI Michigan|MN Minnesota|MS Mississippi|MO Missouri|MT Montana|NE Nebraska|NV Nevada|NH New Hampshire|NJ New Jersey|NM New Mexico|NY New York|NC North Carolina|ND North Dakota|OH Ohio|OK Oklahoma|OR Oregon|PA Pennsylvania|RI Rhode Island|SC South Carolina|SD South Dakota|TN Tennessee|TX Texas|UT Utah|VT Vermont|VA Virginia|WA Washington|WV West Virginia|WI Wisconsin|WY Wyoming'
+    .split('|').map(x => `<option value="${x.slice(0, 2)}">${x.slice(3)}</option>`).join('');
+  const field = (id, label, attrs = '', req = true) => `<div class="form-group"><label for="${id}">${label}${req ? ' <span class="req">*</span>' : ''}</label><input id="${id}" class="form-control" ${req ? 'required ' : ''}${attrs}></div>`;
+
+  const html = head({ title: `Checkout | ${BRAND}`, desc: `Secure checkout for ${BRAND} HAZWOPER courses.`, canonical: SITE_URL + '/checkout.html' })
+    .replace('content="index, follow', 'content="noindex, follow') + `
+<section class="wrap checkout-wrap">
+  <div class="checkout-header">
+    <h1>Checkout</h1>
+    <p id="enrollModeNote">Send this enrollment request and our team replies by email with your order confirmation and payment options (credit card, or purchase order for companies). Learner logins are emailed once the order is confirmed. Prefer to talk? Call <a href="${PHONE_HREF}">${PHONE}</a> or email <a href="mailto:${ENROLL_EMAIL}">${ENROLL_EMAIL}</a>.</p>
+  </div>
+
+  <div id="checkoutSuccessView" class="done-card" hidden>
+    <h2>Order confirmed</h2>
+    <p>Thank you for your purchase. Your payment has been processed.</p>
+    <p>Order reference: <strong id="successOrderId">#---</strong><br>Confirmation sent to: <strong id="successUserEmail">---</strong></p>
+    <p>Check your inbox for your receipt and course login details to start training.</p>
+    <a class="btn btn-lg" href="./">Back to courses</a>
+  </div>
+
+  <div id="requestSentView" class="done-card" hidden>
+    <h2>Your enrollment request is ready</h2>
+    <p>Your email app should have opened with the request below, addressed to ${ENROLL_EMAIL}. Press send and our team will reply with your order confirmation and payment options.</p>
+    <p>If your email app didn't open, copy the request and email it to <a href="mailto:${ENROLL_EMAIL}">${ENROLL_EMAIL}</a>, or call <a href="${PHONE_HREF}">${PHONE}</a>.</p>
+    <pre id="requestSummaryText" tabindex="0"></pre>
+    <p><button type="button" id="copyRequestBtn" class="btn btn-ghost">Copy request</button> <a id="reopenEmailLink" class="btn" href="mailto:${ENROLL_EMAIL}">Open email again</a></p>
+  </div>
+
+  <form id="stripeCheckoutForm" class="checkout-grid">
+    <div class="checkout-main">
+      <div class="checkout-section">
+        <h2>Seats &amp; contact information</h2>
+        <div class="form-group">
+          <label for="seatCount">Number of learners (seats) <span class="req">*</span></label>
+          <input type="number" id="seatCount" class="form-control" required min="1" max="10000" step="1" value="1" inputmode="numeric">
+          <p class="hint">Volume pricing applies automatically from 2 seats. Learner names and emails can be added after the order is confirmed.</p>
+        </div>
+        <div class="form-row">${field('billingFirstName', 'First name', 'autocomplete="given-name"')}${field('billingLastName', 'Last name', 'autocomplete="family-name"')}</div>
+        ${field('billingCompany', 'Company / organization', 'autocomplete="organization"', false)}
+        <div class="form-row">${field('billingPhone', 'Phone', 'type="tel" autocomplete="tel"')}${field('billingEmail', 'Email address', 'type="email" autocomplete="email"')}</div>
+        <div id="billingAddressFields">
+          <div class="form-row">${field('billingAddress', 'Street address', 'autocomplete="address-line1"')}${field('billingAddress2', 'Suite, apt, building', 'autocomplete="address-line2"', false)}</div>
+          <div class="form-row">${field('billingCity', 'City', 'autocomplete="address-level2"')}
+            <div class="form-group"><label for="billingState">State <span class="req">*</span></label><select id="billingState" class="form-control" required><option value="">Select a state</option>${states}</select></div></div>
+          <div class="form-row">${field('billingZip', 'Zip code', 'autocomplete="postal-code"')}
+            <div class="form-group"><label for="billingCountry">Country <span class="req">*</span></label><select id="billingCountry" class="form-control" required><option value="US" selected>United States</option><option value="CA">Canada</option></select></div></div>
+        </div>
+      </div>
+
+      <div class="checkout-section" id="requestSection">
+        <h2>Notes for our team</h2>
+        <div class="form-group">
+          <label for="requestNotes">Anything we should know? (optional)</label>
+          <textarea id="requestNotes" class="form-control" rows="3" placeholder="Purchase order number, invoicing contact, deadline, more courses to add"></textarea>
+        </div>
+        <p class="hint">No payment is taken on this page, and sending a request doesn't commit you to buy.</p>
+        <div id="request-error" class="pay-error" hidden></div>
+        <button type="submit" class="btn btn-lg btn-block">Send enrollment request</button>
+      </div>
+
+      <div class="checkout-section" id="paymentSection" hidden>
+        <h2>Payment</h2>
+        <div class="card-field"><div id="payment-element"></div></div>
+        <div id="payment-error" class="pay-error" role="alert" hidden></div>
+        <button type="submit" id="submitPaymentBtn" class="btn btn-lg btn-block"><span class="btn-text">Place order</span><span class="btn-spinner" hidden>Processing...</span></button>
+        <p class="hint">Payments are processed securely by Stripe. Card details never touch our servers.</p>
+      </div>
+    </div>
+
+    <aside class="checkout-sidebar">
+      <div class="summary">
+        <h2>Order summary</h2>
+        <div class="sum-line"><div><strong id="summaryCourseName">-</strong><span id="summaryCourseQty"></span></div><span id="summaryCourseAmount"></span></div>
+        <p id="summaryCourseIncludes" class="hint" hidden></p>
+        <div class="sum-row"><span>Subtotal</span><span id="summarySubtotal"></span></div>
+        <div class="sum-row" id="summaryDiscountRow" hidden><span id="summaryDiscountLabel"></span><span id="summaryDiscount"></span></div>
+        <div class="sum-row sum-total"><span>Total</span><span id="summaryTotal"></span></div>
+        <ul class="checks small"><li>Instant certificate &amp; wallet card</li><li>Self-paced, 24/7 access</li><li>Support by phone and email</li></ul>
+      </div>
+    </aside>
+  </form>
+</section>
+` + foot(0, ['config.js', 'checkout.js']);
+  fs.writeFileSync(path.join(ROOT, 'checkout.html'), html);
+}
+
 fs.rmSync(path.join(ROOT, 'courses'), { recursive: true, force: true });
 buildIndex();
 courses.forEach(buildCourse);
 buildExtras();
+buildCheckout();
 console.log(`Built index + ${courses.length} course pages for ${SITE_URL}`);

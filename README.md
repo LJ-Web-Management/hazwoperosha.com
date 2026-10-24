@@ -14,7 +14,11 @@ tools/build.js       generator - run `node tools/build.js` after editing data or
 index.html           generated hub page (course list, which-course guide, bundle, FAQ)
 courses/<slug>/      generated per-course pages
 sitemap.xml, robots.txt, llms.txt, 404.html   generated SEO / AI-crawler files
-assets/checkout.js   checkout config (Stripe key, checkout URL template, course IDs) + search
+checkout.html        generated checkout page (noindex)
+assets/config.js     generated checkout config (Stripe key, API base, items + LMS ids)
+assets/checkout.js   checkout flow (Stripe + LMS add_new_user/add_order, or email request)
+assets/search.js     hub-page course search
+data/lms-ids.json    hazwoper-osha.com LMS course id per course slug
 assets/style.css     styling
 ```
 
@@ -23,10 +27,15 @@ Generated files are committed so the site also works with "Deploy from branch".
 
 ## Checkout
 
-Edit `window.CHECKOUT` at the top of `assets/checkout.js`: set `stripePublishableKey`,
-`checkoutUrl` (a template using `{courseId}`, `{slug}`, `{price}`, `{key}`), and map each
-course slug (see `data/courses.json`) to its course ID in `courseIds`. Courses without an
-ID fall back to linking to https://hazwoper-osha.com/.
+`checkout.html` uses the same checkout as datacentertraining.us: Stripe.js creates a card
+payment method, then the page calls `https://hazwoper-osha.com/api/add_new_user` and
+`/add_order` with the LMS `course_id`. The Stripe publishable key, API base and volume-discount
+tiers are set at the top of `tools/build.js`, which generates `assets/config.js`.
+
+Card checkout is used for a course only when it has an LMS id in `data/lms-ids.json`.
+Courses still set to `null`, and the bundle, go by enrollment-request email to
+info@hazwoper-osha.com instead. To turn on card checkout for a course, fill in its LMS id and
+run `node tools/build.js`.
 
 ## SEO
 

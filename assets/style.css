@@ -157,3 +157,34 @@ details p { margin: 0 0 14px; color: #3f3f46; }
   .logo img { height: 32px; }
   .nav-phone { font-size: .85rem; padding: 6px 10px; }
 }
+
+/* checkout */
+.checkout-wrap { padding-top: 32px; padding-bottom: 56px; }
+.checkout-header p { color: var(--muted); max-width: 70ch; }
+.checkout-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 32px; align-items: start; margin-top: 20px; }
+.checkout-section { border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; margin-bottom: 20px; }
+.checkout-section h2, .summary h2 { font-size: 1.15rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-weight: 600; font-size: .92rem; margin-bottom: 4px; }
+.req { color: #b91c1c; }
+.form-control { width: 100%; padding: 11px 12px; font: inherit; border: 2px solid var(--line); border-radius: 10px; background: #fff; color: var(--fg); }
+.form-control:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,205,8,.35); }
+.hint { color: var(--muted); font-size: .88rem; margin: 6px 0 0; }
+.card-field { border: 2px solid var(--line); border-radius: 10px; padding: 14px 12px; margin-bottom: 14px; }
+.pay-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
+button.btn { font: inherit; font-weight: 700; cursor: pointer; }
+button.btn:disabled { opacity: .6; cursor: progress; }
+.summary { position: sticky; top: 84px; border: 2px solid var(--fg); border-radius: var(--radius); padding: 22px; box-shadow: 6px 6px 0 var(--accent); }
+.sum-line { display: flex; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.sum-line span { display: block; color: var(--muted); font-size: .9rem; }
+.sum-line > span { color: var(--fg); font-weight: 700; font-size: 1rem; }
+.sum-row { display: flex; justify-content: space-between; padding: 8px 0; }
+.sum-total { border-top: 2px solid var(--fg); margin-top: 6px; padding-top: 12px; font-weight: 800; font-size: 1.2rem; }
+.done-card { border: 2px solid var(--fg); border-radius: var(--radius); padding: 26px; box-shadow: 6px 6px 0 var(--accent); max-width: 760px; }
+.done-card pre { white-space: pre-wrap; background: var(--soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px; font-size: .88rem; }
+@media (max-width: 860px) {
+  .checkout-grid, .form-row { grid-template-columns: 1fr; }
+  .summary { position: static; }
+  .checkout-sidebar { order: -1; }
+}
