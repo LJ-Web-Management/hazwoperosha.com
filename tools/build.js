@@ -5,9 +5,19 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const SITE_URL = (process.env.SITE_URL || 'https://lj-web-management.github.io/website-staging').replace(/\/$/, '');
-const BRAND = 'HAZWOPER OSHA Training';
+// Optional per-site settings (brand, URL, look). Without site.config.js the defaults below build the staging site.
 const MAIN_SITE = 'https://hazwoper-osha.com/';
+const SITE = fs.existsSync(path.join(ROOT, 'site.config.js')) ? require('../site.config.js') : {};
+const SITE_URL = (process.env.SITE_URL || SITE.url || 'https://lj-web-management.github.io/website-staging').replace(/\/$/, '');
+const BRAND = SITE.brand || 'HAZWOPER OSHA Training';
+const LEGAL_NAME = SITE.legalName || 'HAZWOPER OSHA Training LLC';
+const THEME_COLOR = SITE.themeColor || '#ffcd08';
+const SHARE_IMAGE = SITE.shareImage || 'assets/hazwoper-logo.png';
+const HEAD_EXTRA = SITE.headExtra || '';
+const SAME_AS = SITE.sameAs || [MAIN_SITE, 'https://hazwoperosha.org/'];
+const logoHtml = (rel, where) => SITE.logo ? SITE.logo(rel, where) : where === 'footer'
+  ? `<img src="${rel}assets/hazwoper-logo.png" alt="${BRAND}" width="160" height="43" loading="lazy">`
+  : `<img src="${rel}assets/hazwoper-logo.png" alt="${BRAND}" width="180" height="48">`;
 const PHONE = '+1-866-429-6742';
 const PHONE_HREF = 'tel:+18664296742';
 const EMAIL = 'sales@hazwoper-osha.com';
@@ -24,7 +34,7 @@ const QUIZZES = require('../data/quizzes.js');
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_doCHB0jglD5eISjEmB1vB6mb00xIg51noK';
 const API_BASE_URL = 'https://hazwoper-osha.com/api';
 const ENROLL_EMAIL = 'info@hazwoper-osha.com';
-const ORDER_FROM = 'hazwoper-training-landing';
+const ORDER_FROM = SITE.orderFrom || 'hazwoper-training-landing';
 
 // ---------- helpers ----------
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -111,20 +121,20 @@ function head({ title, desc, canonical, extra = '', depth = 0 }) {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="${SITE_URL}/assets/hazwoper-logo.png">
+<meta property="og:image" content="${SITE_URL}/${SHARE_IMAGE}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
-<meta name="theme-color" content="#ffcd08">
+<meta name="theme-color" content="${THEME_COLOR}">
 <link rel="icon" type="image/png" href="${rel}assets/favicon.png">
-<link rel="stylesheet" href="${rel}assets/style.css">
+${HEAD_EXTRA}<link rel="stylesheet" href="${rel}assets/style.css">
 ${extra}
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="wrap header-row">
-    <a class="logo" href="${rel || './'}"><img src="${rel}assets/hazwoper-logo.png" alt="${BRAND}" width="180" height="48"></a>
+    <a class="logo" href="${rel || './'}">${logoHtml(rel, 'header')}</a>
     <nav aria-label="Main">
       <a href="${rel}#courses">Courses</a>
       <a href="${rel}guides/">Guides</a>
@@ -147,7 +157,7 @@ function foot(depth = 0, scripts = ['cart.js', 'search.js']) {
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <div>
-      <img src="${rel}assets/hazwoper-logo.png" alt="${BRAND}" width="160" height="43" loading="lazy">
+      <a class="logo" href="${rel || './'}">${logoHtml(rel, 'footer')}</a>
       <p>Online OSHA HAZWOPER, RCRA and hazardous materials training for workers, supervisors and employers across the United States.</p>
     </div>
     <div>
@@ -167,7 +177,7 @@ function foot(depth = 0, scripts = ['cart.js', 'search.js']) {
       </ul>
     </div>
   </div>
-  <p class="wrap legal">&copy; ${YEAR} ${BRAND} LLC · All rights reserved</p>
+  <p class="wrap legal">&copy; ${YEAR} ${LEGAL_NAME} · All rights reserved</p>
 </footer>
 ${scripts.map(f => `<script src="${rel}assets/${f}" defer></script>`).join('\n')}
 </body>
@@ -240,7 +250,7 @@ const quizzesFor = slug => QUIZZES.filter(q => q.course === slug);
 
 const orgLd = {
   '@type': 'EducationalOrganization', '@id': `${SITE_URL}/#organization`, name: BRAND, url: SITE_URL + '/',
-  sameAs: [MAIN_SITE, 'https://hazwoperosha.org/'], logo: `${SITE_URL}/assets/hazwoper-logo.png`,
+  sameAs: SAME_AS, logo: `${SITE_URL}/${SHARE_IMAGE}`,
   email: EMAIL, telephone: PHONE, areaServed: 'US',
   contactPoint: { '@type': 'ContactPoint', telephone: PHONE, email: EMAIL, contactType: 'sales', availableLanguage: ['English', 'Spanish'] },
 };
@@ -488,7 +498,7 @@ function buildGuide(g) {
   const others = ALL_GUIDES.filter(x => x.slug !== g.slug);
   const graph = [orgLd,
     { '@type': 'Article', '@id': url + '#article', headline: g.title, description: g.desc, url, mainEntityOfPage: url,
-      datePublished: PUBLISHED, dateModified: TODAY, inLanguage: 'en', image: `${SITE_URL}/assets/hazwoper-logo.png`,
+      datePublished: PUBLISHED, dateModified: TODAY, inLanguage: 'en', image: `${SITE_URL}/${SHARE_IMAGE}`,
       author: { '@id': `${SITE_URL}/#organization` }, publisher: { '@id': `${SITE_URL}/#organization` },
       about: ['HAZWOPER', 'OSHA 29 CFR 1910.120'], isPartOf: { '@id': `${SITE_URL}/#website` } },
     crumbLd([['HAZWOPER Training', SITE_URL + '/'], ['Guides', `${SITE_URL}/guides/`], [g.title, url]])];
@@ -692,7 +702,7 @@ Sitemap: ${SITE_URL}/sitemap.xml
 
 ## Key facts
 
-- Provider: ${BRAND} LLC (${MAIN_SITE})
+- Provider: ${LEGAL_NAME} (${MAIN_SITE})
 - Format: 100% online, self-paced, any device, progress saved automatically
 - Certificate: certificate of completion and wallet card available immediately after passing
 - Languages: English; OSHA 40-Hour HAZWOPER also in Spanish
