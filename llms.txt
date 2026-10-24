@@ -75,6 +75,35 @@
 
 - [HAZWOPER Train-the-Trainer Certification](https://lj-web-management.github.io/website-staging/courses/hazwoper-train-the-trainer-certification/): 24 Hours, $399.99. Meets 29 CFR 1910.120(e).
 
+## Guides
+
+- [What Is HAZWOPER? The Complete Guide to OSHA 29 CFR 1910.120](https://lj-web-management.github.io/website-staging/guides/what-is-hazwoper/): What HAZWOPER means, who it covers, the 40, 24 and 8 hour training levels, emergency response, medical surveillance and how to get certified under OSHA 29 CFR 1910.120.
+- [40 vs 24 vs 8 Hour HAZWOPER: Which Training Do You Need?](https://lj-web-management.github.io/website-staging/guides/which-hazwoper-course-do-i-need/): Compare 40 hour, 24 hour and 8 hour HAZWOPER training. Who needs each level under OSHA 1910.120(e), field experience rules, supervisor training and how to upgrade from 24 to 40.
+- [HAZWOPER 8 Hour Refresher Requirements: Deadlines, Lapses and Records](https://lj-web-management.github.io/website-staging/guides/hazwoper-refresher-requirements/): OSHA requires 8 hours of HAZWOPER refresher training every year under 1910.120(e)(8). When it is due, what happens if it lapses, what it covers, and the records employers keep.
+- [How to Get HAZWOPER Certified Online (and How Long It Lasts)](https://lj-web-management.github.io/website-staging/guides/hazwoper-certification/): Step-by-step guide to HAZWOPER certification: choosing a level, online training, field experience, certificates and wallet cards, how long HAZWOPER certification lasts and how to verify it.
+- [PPE Levels A, B, C and D Explained (EPA and OSHA HAZWOPER)](https://lj-web-management.github.io/website-staging/guides/ppe-levels-a-b-c-d/): The four levels of HAZWOPER personal protective equipment: what Level A, B, C and D include, when to use each, and how to choose a level under OSHA 1910.120 Appendix B.
+- [HAZWOPER Decontamination Procedures: Decon Line Setup and Steps](https://lj-web-management.github.io/website-staging/guides/hazwoper-decontamination/): How HAZWOPER decontamination works under 1910.120(k): decon methods, setting up the contamination reduction corridor, typical decon line stations, equipment decon and emergency decon.
+- [Site Control and Work Zones: Exclusion, Contamination Reduction and Support Zones](https://lj-web-management.github.io/website-staging/guides/site-control-work-zones/): HAZWOPER site control under 1910.120(d): the site control program, hot, warm and cold work zones, the buddy system, access control points and site communications.
+- [HAZWOPER Air Monitoring: Oxygen, LEL, Toxics and Direct-Reading Instruments](https://lj-web-management.github.io/website-staging/guides/air-monitoring/): HAZWOPER air monitoring under 1910.120(h): oxygen, LEL and toxic action levels, 4-gas meters, PIDs, FIDs, colorimetric tubes, bump testing, calibration and monitoring order.
+- [Site-Specific Safety and Health Plan (HASP) Requirements Under 1910.120(b)](https://lj-web-management.github.io/website-staging/guides/site-safety-and-health-plan/): What a HAZWOPER site-specific safety and health plan (HASP) must contain under OSHA 1910.120(b)(4), who writes it, pre-entry briefings, inspections and a checklist of required elements.
+- [HAZWOPER Emergency Response Training Levels: Awareness to Incident Commander](https://lj-web-management.github.io/website-staging/guides/emergency-response-training-levels/): The five HAZWOPER emergency responder levels under 1910.120(q)(6): first responder awareness, operations, HAZMAT technician, specialist and on-scene incident commander, with required hours and competencies.
+- [HAZWOPER Medical Surveillance Requirements (1910.120(f))](https://lj-web-management.github.io/website-staging/guides/hazwoper-medical-surveillance/): Who needs HAZWOPER medical surveillance under OSHA 1910.120(f), exam frequency, what the exam includes, the physician's written opinion and 30-year record retention.
+- [Exposure Limits Explained: PEL, REL, TLV, STEL, Ceiling and IDLH](https://lj-web-management.github.io/website-staging/guides/exposure-limits-pel-tlv-idlh/): Plain-English guide to occupational exposure limits used in HAZWOPER: OSHA PEL, NIOSH REL, ACGIH TLV, TWA, STEL, ceiling, IDLH, and routes of exposure.
+- [Cal/OSHA HAZWOPER (Title 8 CCR 5192): California Training Guide](https://lj-web-management.github.io/website-staging/guides/cal-osha-hazwoper/): California HAZWOPER training under Title 8 CCR 5192: who needs it, 40, 24 and 8 hour Cal/OSHA courses, TSDF training, and how Cal/OSHA compares with federal OSHA 1910.120.
+- [RCRA Hazardous Waste Training Requirements by Generator Category](https://lj-web-management.github.io/website-staging/guides/rcra-hazardous-waste-training-requirements/): EPA RCRA hazardous waste training requirements for VSQGs, SQGs and LQGs, satellite accumulation, manifests, universal waste, DOT hazmat training and how RCRA training relates to HAZWOPER.
+- [HAZWOPER Compliance Checklist for Employers](https://lj-web-management.github.io/website-staging/guides/hazwoper-employer-compliance-checklist/): A practical HAZWOPER compliance checklist for employers and EHS managers: scope, written programs, training records, medical surveillance, PPE, emergency response and common OSHA citations.
+- [HAZWOPER Glossary: 71 Terms and Acronyms Explained](https://lj-web-management.github.io/website-staging/guides/hazwoper-glossary/): Definitions of 71 HAZWOPER, OSHA, EPA and RCRA terms and acronyms: IDLH, LEL, PEL, SCBA, PPE levels, work zones, decon, generator categories and more.
+
+## Free practice quizzes
+
+- [HAZWOPER 40 Hour Practice Test](https://lj-web-management.github.io/website-staging/quizzes/hazwoper-40-hour-practice-test/): 15 questions with answers.
+- [HAZWOPER 8 Hour Refresher Practice Quiz](https://lj-web-management.github.io/website-staging/quizzes/hazwoper-8-hour-refresher-practice-quiz/): 10 questions with answers.
+- [HAZWOPER PPE Levels Quiz (Levels A, B, C and D)](https://lj-web-management.github.io/website-staging/quizzes/ppe-levels-quiz/): 10 questions with answers.
+- [Air Monitoring and Gas Detection Quiz](https://lj-web-management.github.io/website-staging/quizzes/air-monitoring-quiz/): 10 questions with answers.
+- [Decontamination and Site Control Quiz](https://lj-web-management.github.io/website-staging/quizzes/decontamination-and-site-control-quiz/): 10 questions with answers.
+- [HAZWOPER First Responder Awareness Level Quiz](https://lj-web-management.github.io/website-staging/quizzes/first-responder-awareness-quiz/): 10 questions with answers.
+- [RCRA Hazardous Waste Generator Quiz](https://lj-web-management.github.io/website-staging/quizzes/rcra-hazardous-waste-quiz/): 10 questions with answers.
+
 ## FAQ
 
 - **What is HAZWOPER training?** HAZWOPER stands for Hazardous Waste Operations and Emergency Response. It is the OSHA standard at 29 CFR 1910.120 (and 29 CFR 1926.65 for construction) that requires training for workers who clean up hazardous waste sites, work at RCRA treatment, storage and disposal (TSD) facilities, or respond to hazardous substance releases.
@@ -85,5 +114,10 @@
 - **How fast do I get my HAZWOPER certificate?** Your certificate of completion is available to download and print immediately after you finish the course and pass the final exam. A wallet card is included.
 - **Can I take HAZWOPER training in Spanish?** Yes. The OSHA 40-Hour HAZWOPER Training is available in a full Spanish-language version.
 - **Do you offer Cal/OSHA HAZWOPER?** Yes. Cal/OSHA 40-hour, 24-hour and 8-hour refresher courses aligned to Title 8 CCR 5192 are available, as well as Cal/OSHA TSDF RCRA versions.
-- **Do you offer group or company HAZWOPER training?** Yes. Employers can buy seats in bulk, track employee progress and certificates. Call +1-866-429-6742 or email sales@hazwoper-osha.com for volume pricing.
+- **Do you offer group or company HAZWOPER training?** Yes. Add every course your team needs to the cart, set the number of seats for each, and check out once. For purchase orders or large groups, call +1-866-429-6742 or email sales@hazwoper-osha.com.
+- **Do you have free HAZWOPER practice tests?** Yes. Free practice quizzes with answers and explanations cover the 40 hour and 8 hour refresher, PPE levels, air monitoring, decontamination and site control, first responder awareness and RCRA hazardous waste.
 - **How long do I have to finish a course?** Courses are self-paced. You can log in and out as often as you like and your progress is saved automatically, so you can complete the course around your work schedule.
+
+## Full text
+
+The full text of every guide, the glossary and all quiz questions with answers is at https://lj-web-management.github.io/website-staging/llms-full.txt

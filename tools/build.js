@@ -16,17 +16,15 @@ const YEAR = new Date().getFullYear();
 
 const src = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/source.json'), 'utf8'));
 const LMS_IDS = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/lms-ids.json'), 'utf8'));
+const GUIDES = require('../data/guides.js');
+const GLOSSARY = require('../data/glossary.js');
+const QUIZZES = require('../data/quizzes.js');
 
 // Checkout settings - same Stripe account and LMS API as datacentertraining.us (js/config.js there).
 const STRIPE_PUBLISHABLE_KEY = 'pk_live_doCHB0jglD5eISjEmB1vB6mb00xIg51noK';
 const API_BASE_URL = 'https://hazwoper-osha.com/api';
 const ENROLL_EMAIL = 'info@hazwoper-osha.com';
 const ORDER_FROM = 'hazwoper-training-landing';
-const BULK_TIERS = [
-  { min: 1, max: 1, discount: 0 }, { min: 2, max: 10, discount: 0.01 }, { min: 11, max: 20, discount: 0.02 },
-  { min: 21, max: 50, discount: 0.03 }, { min: 51, max: 100, discount: 0.05 }, { min: 101, max: 250, discount: 0.07 },
-  { min: 251, max: 500, discount: 0.08 }, { min: 501, max: 1000, discount: 0.10 },
-];
 
 // ---------- helpers ----------
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -91,7 +89,8 @@ const FAQ = [
   ['How fast do I get my HAZWOPER certificate?', 'Your certificate of completion is available to download and print immediately after you finish the course and pass the final exam. A wallet card is included.'],
   ['Can I take HAZWOPER training in Spanish?', 'Yes. The OSHA 40-Hour HAZWOPER Training is available in a full Spanish-language version.'],
   ['Do you offer Cal/OSHA HAZWOPER?', 'Yes. Cal/OSHA 40-hour, 24-hour and 8-hour refresher courses aligned to Title 8 CCR 5192 are available, as well as Cal/OSHA TSDF RCRA versions.'],
-  ['Do you offer group or company HAZWOPER training?', `Yes. Employers can buy seats in bulk, track employee progress and certificates. Call ${PHONE} or email ${EMAIL} for volume pricing.`],
+  ['Do you offer group or company HAZWOPER training?', `Yes. Add every course your team needs to the cart, set the number of seats for each, and check out once. For purchase orders or large groups, call ${PHONE} or email ${EMAIL}.`],
+  ['Do you have free HAZWOPER practice tests?', 'Yes. Free practice quizzes with answers and explanations cover the 40 hour and 8 hour refresher, PPE levels, air monitoring, decontamination and site control, first responder awareness and RCRA hazardous waste.'],
   ['How long do I have to finish a course?', 'Courses are self-paced. You can log in and out as often as you like and your progress is saved automatically, so you can complete the course around your work schedule.'],
 ];
 
@@ -128,14 +127,21 @@ ${extra}
     <a class="logo" href="${rel || './'}"><img src="${rel}assets/hazwoper-logo.png" alt="${BRAND}" width="180" height="48"></a>
     <nav aria-label="Main">
       <a href="${rel}#courses">Courses</a>
+      <a href="${rel}guides/">Guides</a>
+      <a href="${rel}quizzes/">Quizzes</a>
       <a href="${rel}#faq">FAQ</a>
       <a class="nav-phone" href="${PHONE_HREF}">${PHONE}</a>
+      <a class="nav-cart" href="${rel}checkout.html" aria-label="Cart"><span aria-hidden="true">Cart</span> <span class="cart-count" data-cart-count>0</span></a>
     </nav>
+    <form class="site-search" action="${rel}search/" method="get" role="search">
+      <label class="sr" for="site-q">Search the site</label>
+      <input id="site-q" name="q" type="search" placeholder="Search courses, guides, quizzes..." autocomplete="off">
+    </form>
   </div>
 </header>
 <main id="main">`;
 }
-function foot(depth = 0, scripts = ['search.js']) {
+function foot(depth = 0, scripts = ['cart.js', 'search.js']) {
   const rel = depth ? '../'.repeat(depth) : '';
   return `</main>
 <footer class="site-footer">
@@ -147,6 +153,10 @@ function foot(depth = 0, scripts = ['search.js']) {
     <div>
       <h2>Popular courses</h2>
       <ul>${courses.slice(0, 5).map(c => `<li><a href="${rel}courses/${c.slug}/">${esc(c.name)}</a></li>`).join('')}</ul>
+    </div>
+    <div>
+      <h2>Guides &amp; quizzes</h2>
+      <ul>${ALL_GUIDES.slice(0, 5).map(g => `<li><a href="${rel}guides/${g.slug}/">${esc(g.short)}</a></li>`).join('')}<li><a href="${rel}guides/">All HAZWOPER guides</a></li><li><a href="${rel}quizzes/">Free practice quizzes</a></li></ul>
     </div>
     <div>
       <h2>Contact</h2>
@@ -168,15 +178,65 @@ ${scripts.map(f => `<script src="${rel}assets/${f}" defer></script>`).join('\n')
 function enrollBtn(c, cls = 'btn', depth = 0) {
   return `<a class="${cls}" href="${'../'.repeat(depth)}checkout.html?item=${c.slug}">Enroll Now · ${money(c.price)}</a>`;
 }
+// Works without JS as a link to checkout; cart.js turns it into an in-place add.
+function cartBtn(c, cls = 'btn', depth = 0) {
+  return `<a class="${cls}" href="${'../'.repeat(depth)}checkout.html?item=${c.slug}" data-add-to-cart="${c.slug}">Add to cart</a>`;
+}
 function card(c, depth = 0) {
   const rel = depth ? '../'.repeat(depth) : '';
   return `<article class="card" data-search="${esc((c.name + ' ' + c.citation + ' ' + c.category).toLowerCase())}">
   <div class="card-top"><span class="pill">${esc(c.duration)}</span><span class="price">${money(c.price)}</span></div>
   <h3><a href="${rel}courses/${c.slug}/">${esc(c.name)}</a></h3>
   <p class="cite">${esc(c.citation)}</p>
-  <div class="card-actions">${enrollBtn(c, 'btn', depth)}<a class="link" href="${rel}courses/${c.slug}/">Details</a></div>
+  <div class="card-actions">${cartBtn(c, 'btn', depth)}<a class="link" href="${rel}courses/${c.slug}/">Details</a></div>
 </article>`;
 }
+
+// ---------- guides, glossary, quizzes ----------
+const COURSE_BY_SLUG = Object.fromEntries(courses.map(c => [c.slug, c]));
+const GLOSSARY_GUIDE = {
+  slug: 'hazwoper-glossary',
+  title: `HAZWOPER Glossary: ${GLOSSARY.length} Terms and Acronyms Explained`,
+  short: 'HAZWOPER glossary',
+  desc: `Definitions of ${GLOSSARY.length} HAZWOPER, OSHA, EPA and RCRA terms and acronyms: IDLH, LEL, PEL, SCBA, PPE levels, work zones, decon, generator categories and more.`,
+  related: ['osha-40-hour-hazwoper-training', 'osha-24-hour-hazwoper-training', 'rcra-hazardous-waste-generator-training'],
+  quiz: 'hazwoper-40-hour-practice-test',
+  body: `<p>Plain-English definitions of the terms and acronyms used in HAZWOPER training, OSHA 29 CFR 1910.120, EPA RCRA and hazardous materials work. Use the site search to jump to a term, or follow the links to the full guides.</p>
+<h2>Terms A to Z</h2>
+<dl class="glossary">${GLOSSARY.map(([t, d, g]) => `<div id="${slugify(t)}"><dt>${esc(t)}</dt><dd>${esc(d)}${g ? ` {{guide:${g}|Learn more}}` : ''}</dd></div>`).join('\n')}</dl>`,
+  faq: [],
+};
+const ALL_GUIDES = GUIDES.concat(GLOSSARY_GUIDE);
+const GUIDE_BY_SLUG = Object.fromEntries(ALL_GUIDES.map(g => [g.slug, g]));
+const QUIZ_BY_SLUG = Object.fromEntries(QUIZZES.map(q => [q.slug, q]));
+const guideUrl = g => `${SITE_URL}/guides/${g.slug}/`;
+const quizUrl = q => `${SITE_URL}/quizzes/${q.slug}/`;
+
+// Replaces {{course:slug|text}}, {{guide:slug|text}} and {{quiz:slug|text}} with links; unknown slugs fail the build.
+function links(html, rel) {
+  return html.replace(/\{\{(course|guide|quiz):([a-z0-9-]+)(?:\|([^}]+))?\}\}/g, (_, kind, slug, text) => {
+    const target = { course: COURSE_BY_SLUG, guide: GUIDE_BY_SLUG, quiz: QUIZ_BY_SLUG }[kind][slug];
+    if (!target) throw new Error(`unknown ${kind} link: ${slug}`);
+    const dir = { course: 'courses', guide: 'guides', quiz: 'quizzes' }[kind];
+    return `<a href="${rel}${dir}/${slug}/">${esc(text || target.name || target.short)}</a>`;
+  });
+}
+const stripTags = html => html.replace(/<[^>]+>/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&le;/g, '<=').replace(/&ge;/g, '>=')
+  .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
+// Adds ids to <h2>s and returns the table of contents.
+function withToc(html) {
+  const toc = [];
+  const out = html.replace(/<h2>(.*?)<\/h2>/g, (_, inner) => {
+    const id = slugify(stripTags(inner));
+    toc.push([id, stripTags(inner)]);
+    return `<h2 id="${id}">${inner}</h2>`;
+  });
+  return { html: out, toc };
+}
+const faqLd = faq => ({ '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) });
+const crumbLd = items => ({ '@type': 'BreadcrumbList', itemListElement: items.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 1, name, item })) });
+const guidesFor = slug => ALL_GUIDES.filter(g => g.related.includes(slug));
+const quizzesFor = slug => QUIZZES.filter(q => q.course === slug);
 
 const orgLd = {
   '@type': 'EducationalOrganization', '@id': `${SITE_URL}/#organization`, name: BRAND, url: SITE_URL + '/',
@@ -208,7 +268,7 @@ function buildIndex() {
       { '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: SITE_URL + '/', name: `${BRAND} - HAZWOPER Courses`, publisher: { '@id': `${SITE_URL}/#organization` } },
       { '@type': 'ItemList', name: 'HAZWOPER Training Courses', numberOfItems: total,
         itemListElement: courses.map((c, i) => ({ '@type': 'ListItem', position: i + 1, item: courseLd(c) })) },
-      { '@type': 'FAQPage', mainEntity: FAQ.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+      faqLd(FAQ),
     ],
   });
   const f40 = courses.find(c => c.name === 'OSHA 40 Hour HAZWOPER Training');
@@ -235,12 +295,13 @@ function buildIndex() {
       <div class="hero-ctas">
         ${enrollBtn(f40, 'btn btn-lg')}
         <a class="btn btn-ghost btn-lg" href="#courses">Browse all ${total} courses</a>
+        <a class="btn btn-ghost btn-lg" href="quizzes/">Free practice tests</a>
       </div>
       <ul class="trust">
         <li>Instant certificate &amp; wallet card</li>
         <li>24/7 access on any device</li>
         <li>Save progress, finish at your pace</li>
-        <li>Group &amp; employer pricing</li>
+        <li>One cart for your whole team</li>
       </ul>
     </div>
     <div class="quick" aria-label="Most popular HAZWOPER courses">
@@ -299,10 +360,19 @@ function buildIndex() {
         <li>Certificate of completion and wallet card the moment you pass</li>
         <li>Courses in English and Spanish</li>
         <li>Phone and email support from safety professionals</li>
-        <li>Employer accounts with bulk pricing and certificate tracking</li>
+        <li>One cart and one checkout for every course your team needs</li>
       </ul>
     </div>
   </div>
+</section>
+
+<section class="wrap resources" id="resources" aria-labelledby="h-resources">
+  <h2 id="h-resources">Free HAZWOPER guides &amp; resources</h2>
+  <p class="group-blurb">Plain-English answers to HAZWOPER questions, written from the OSHA, Cal/OSHA and EPA rules.</p>
+  <div class="grid">${ALL_GUIDES.map(g => guideCard(g)).join('\n')}</div>
+  <h2 class="mt">Free HAZWOPER practice quizzes</h2>
+  <p class="group-blurb">Test yourself before the final exam. Every question has an answer and explanation.</p>
+  <div class="grid">${QUIZZES.map(q => quizCard(q)).join('\n')}</div>
 </section>
 
 <section class="faq" id="faq" aria-labelledby="h-faq">
@@ -352,6 +422,7 @@ function buildCourse(c) {
   <aside class="buy">
     <p class="buy-price">${money(c.price)}</p>
     ${enrollBtn(c, 'btn btn-lg btn-block', 2)}
+    ${cartBtn(c, 'btn btn-ghost btn-lg btn-block mt-sm', 2)}
     <ul class="checks small">
       <li>Start immediately after checkout</li>
       <li>Progress saves automatically</li>
@@ -370,6 +441,12 @@ function buildCourse(c) {
     <li>Pass the final exam and instantly download your certificate of completion and wallet card.</li>
   </ol>
   ${c.altTags && c.altTags.length ? `<h2>Also known as</h2><p>${c.altTags.map(esc).join(' · ')}</p>` : ''}
+  ${(() => {
+    const gs = guidesFor(c.slug), qs = quizzesFor(c.slug);
+    if (!gs.length && !qs.length) return '';
+    return `<h2>Study guides &amp; practice quizzes</h2>
+  <ul class="res-list">${gs.map(g => `<li><a href="../../guides/${g.slug}/">${esc(g.title)}</a></li>`).join('')}${qs.map(q => `<li><a href="../../quizzes/${q.slug}/">Free quiz: ${esc(q.title)}</a></li>`).join('')}</ul>`;
+  })()}
   <h2>Related HAZWOPER courses</h2>
   <div class="grid">${related.concat(more).map(x => card(x, 2)).join('\n')}</div>
 </section>
@@ -379,9 +456,206 @@ function buildCourse(c) {
   fs.writeFileSync(path.join(dir, 'index.html'), html);
 }
 
+// ---------- guide & quiz pages ----------
+const PUBLISHED = '2026-10-24';
+const readMins = html => Math.max(2, Math.round(stripTags(html).split(' ').length / 220));
+function guideCard(g, depth = 0) {
+  const rel = '../'.repeat(depth);
+  return `<article class="card card-res">
+  <div class="card-top"><span class="pill pill-soft">Guide</span><span class="muted small">${readMins(g.body)} min read</span></div>
+  <h3><a href="${rel}guides/${g.slug}/">${esc(g.title)}</a></h3>
+  <p class="cite">${esc(g.desc.slice(0, 140).replace(/\s\S*$/, ''))}...</p>
+  <div class="card-actions"><a class="link" href="${rel}guides/${g.slug}/">Read the guide</a></div>
+</article>`;
+}
+function quizCard(q, depth = 0) {
+  const rel = '../'.repeat(depth);
+  return `<article class="card card-res">
+  <div class="card-top"><span class="pill pill-soft">Free quiz</span><span class="muted small">${q.questions.length} questions</span></div>
+  <h3><a href="${rel}quizzes/${q.slug}/">${esc(q.title)}</a></h3>
+  <p class="cite">${esc(q.desc.slice(0, 120).replace(/\s\S*$/, ''))}...</p>
+  <div class="card-actions"><a class="btn" href="${rel}quizzes/${q.slug}/">Start quiz</a></div>
+</article>`;
+}
+
+function buildGuide(g) {
+  const url = guideUrl(g);
+  const { html: body, toc } = withToc(links(g.body, '../../'));
+  const courseList = g.related.map(s => COURSE_BY_SLUG[s]).filter(Boolean);
+  if (courseList.length !== g.related.length) throw new Error(`guide ${g.slug} lists an unknown course`);
+  const quiz = g.quiz && QUIZ_BY_SLUG[g.quiz];
+  if (g.quiz && !quiz) throw new Error(`guide ${g.slug} lists an unknown quiz`);
+  const others = ALL_GUIDES.filter(x => x.slug !== g.slug);
+  const graph = [orgLd,
+    { '@type': 'Article', '@id': url + '#article', headline: g.title, description: g.desc, url, mainEntityOfPage: url,
+      datePublished: PUBLISHED, dateModified: TODAY, inLanguage: 'en', image: `${SITE_URL}/assets/hazwoper-logo.png`,
+      author: { '@id': `${SITE_URL}/#organization` }, publisher: { '@id': `${SITE_URL}/#organization` },
+      about: ['HAZWOPER', 'OSHA 29 CFR 1910.120'], isPartOf: { '@id': `${SITE_URL}/#website` } },
+    crumbLd([['HAZWOPER Training', SITE_URL + '/'], ['Guides', `${SITE_URL}/guides/`], [g.title, url]])];
+  if (g.faq.length) graph.push(faqLd(g.faq));
+  if (g.slug === GLOSSARY_GUIDE.slug) graph.push({ '@type': 'DefinedTermSet', '@id': url + '#terms', name: 'HAZWOPER Glossary', url,
+    hasDefinedTerm: GLOSSARY.map(([t, d]) => ({ '@type': 'DefinedTerm', name: t, description: d, url: `${url}#${slugify(t)}` })) });
+  const html = head({ title: `${g.title} | ${BRAND}`, desc: g.desc, canonical: url, depth: 2, extra: jsonLd({ '@context': 'https://schema.org', '@graph': graph }) }) + `
+<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../../">HAZWOPER Training</a> › <a href="../">Guides</a> › <span>${esc(g.short)}</span></nav>
+<div class="wrap guide-layout">
+  <article class="guide">
+    <p class="eyebrow">HAZWOPER guide · ${readMins(g.body)} min read · Updated ${TODAY}</p>
+    <h1>${esc(g.title)}</h1>
+    ${toc.length > 2 ? `<nav class="toc" aria-label="On this page"><strong>On this page</strong><ol>${toc.map(([id, t]) => `<li><a href="#${id}">${esc(t)}</a></li>`).join('')}</ol></nav>` : ''}
+    ${body}
+    ${g.faq.length ? `<h2 id="faq">Frequently asked questions</h2>\n    ${g.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('\n    ')}` : ''}
+    <p class="disclaimer">This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes. It is not legal advice. Always check the current regulation text and your site safety and health plan.</p>
+  </article>
+  <aside class="guide-side">
+    <div class="side-box">
+      <h2>Get trained</h2>
+      ${courseList.map(c => `<div class="side-course"><a href="../../courses/${c.slug}/">${esc(c.name)}</a><div class="side-row"><span>${esc(c.duration)} · <strong>${money(c.price)}</strong></span>${cartBtn(c, 'btn btn-sm', 2)}</div></div>`).join('')}
+    </div>
+    ${quiz ? `<div class="side-box side-quiz"><h2>Test yourself</h2><p>${quiz.questions.length} free questions with answers.</p><a class="btn btn-block" href="../../quizzes/${quiz.slug}/">${esc(quiz.short)}</a></div>` : ''}
+  </aside>
+</div>
+<section class="wrap course-body">
+  <h2>More HAZWOPER guides</h2>
+  <div class="grid">${others.slice(0, 6).map(x => guideCard(x, 2)).join('\n')}</div>
+</section>
+` + foot(2);
+  const dir = path.join(ROOT, 'guides', g.slug);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), html);
+}
+
+function buildGuidesHub() {
+  const url = `${SITE_URL}/guides/`;
+  const ld = jsonLd({ '@context': 'https://schema.org', '@graph': [orgLd,
+    { '@type': 'CollectionPage', '@id': url, url, name: 'HAZWOPER Guides', description: 'Free HAZWOPER guides', isPartOf: { '@id': `${SITE_URL}/#website` },
+      mainEntity: { '@type': 'ItemList', itemListElement: ALL_GUIDES.map((g, i) => ({ '@type': 'ListItem', position: i + 1, url: guideUrl(g), name: g.title })) } },
+    crumbLd([['HAZWOPER Training', SITE_URL + '/'], ['Guides', url]])] });
+  const html = head({ title: `HAZWOPER Guides: Free OSHA 1910.120 Training Resources | ${BRAND}`,
+    desc: `Free HAZWOPER guides: what HAZWOPER is, 40 vs 24 vs 8 hour training, refresher rules, PPE levels, decon, air monitoring, medical surveillance, Cal/OSHA, RCRA and a ${GLOSSARY.length}-term glossary.`,
+    canonical: url, depth: 1, extra: ld }) + `
+<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../">HAZWOPER Training</a> › <span>Guides</span></nav>
+<section class="wrap course-body">
+  <h1>HAZWOPER Guides &amp; Resources</h1>
+  <p class="lead">Everything about OSHA HAZWOPER in one place: who needs training, how much, what the rules say about PPE, decontamination, air monitoring, medical surveillance and emergency response, plus RCRA hazardous waste and Cal/OSHA.</p>
+  <div class="grid">${ALL_GUIDES.map(g => guideCard(g, 1)).join('\n')}</div>
+  <h2>Practice quizzes</h2>
+  <div class="grid">${QUIZZES.map(q => quizCard(q, 1)).join('\n')}</div>
+</section>
+` + foot(1);
+  fs.mkdirSync(path.join(ROOT, 'guides'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'guides/index.html'), html);
+}
+
+function buildQuiz(q) {
+  const url = quizUrl(q);
+  const c = COURSE_BY_SLUG[q.course];
+  const g = GUIDE_BY_SLUG[q.guide];
+  if (!c || !g) throw new Error(`quiz ${q.slug} has an unknown course or guide`);
+  q.questions.forEach((x, i) => { if (!(x.a >= 0 && x.a < x.o.length)) throw new Error(`quiz ${q.slug} question ${i + 1} has a bad answer index`); });
+  const graph = [orgLd,
+    { '@type': 'Quiz', '@id': url + '#quiz', name: q.title, description: q.desc, url, inLanguage: 'en', educationalLevel: 'beginner',
+      learningResourceType: 'Practice problem', isAccessibleForFree: true, provider: { '@id': `${SITE_URL}/#organization` },
+      about: { '@type': 'Thing', name: g.short },
+      hasPart: q.questions.map(x => ({ '@type': 'Question', eduQuestionType: 'Multiple choice', text: x.q,
+        acceptedAnswer: { '@type': 'Answer', text: x.o[x.a], answerExplanation: { '@type': 'Comment', text: x.e } },
+        suggestedAnswer: x.o.filter((_, i) => i !== x.a).map(o => ({ '@type': 'Answer', text: o })) })) },
+    crumbLd([['HAZWOPER Training', SITE_URL + '/'], ['Quizzes', `${SITE_URL}/quizzes/`], [q.title, url]])];
+  const html = head({ title: `${q.title} (Free, With Answers) | ${BRAND}`, desc: q.desc, canonical: url, depth: 2,
+    extra: jsonLd({ '@context': 'https://schema.org', '@graph': graph }) + '\n<noscript><style>.explain{display:block}</style></noscript>' }) + `
+<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../../">HAZWOPER Training</a> › <a href="../">Quizzes</a> › <span>${esc(q.short)}</span></nav>
+<section class="wrap quiz-wrap">
+  <p class="eyebrow">Free practice quiz · ${q.questions.length} questions</p>
+  <h1>${esc(q.title)}</h1>
+  <p class="lead">Answer every question, then press <strong>Check my answers</strong> to see your score and an explanation for each one. Study first with the guide: <a href="../../guides/${g.slug}/">${esc(g.title)}</a>.</p>
+  <form class="quiz" id="quiz" data-total="${q.questions.length}">
+    ${q.questions.map((x, i) => `<fieldset class="q" data-answer="${x.a}">
+      <legend><span class="qn">${i + 1}.</span> ${esc(x.q)}</legend>
+      ${x.o.map((o, j) => `<label class="opt"><input type="radio" name="q${i}" value="${j}"> <span>${esc(o)}</span></label>`).join('\n      ')}
+      <p class="explain"><strong>Answer: ${esc(x.o[x.a])}.</strong> ${esc(x.e)}</p>
+    </fieldset>`).join('\n    ')}
+    <div class="quiz-actions"><button type="submit" class="btn btn-lg">Check my answers</button> <button type="button" class="btn btn-ghost btn-lg" id="quizReset" hidden>Try again</button></div>
+  </form>
+  <div class="quiz-result" id="quizResult" hidden aria-live="polite">
+    <p class="score" id="quizScore"></p>
+    <p id="quizMsg"></p>
+    <p>Ready for the real thing? <a href="../../courses/${c.slug}/">${esc(c.name)}</a>: ${esc(c.duration)}, ${money(c.price)}.</p>
+    <p>${enrollBtn(c, 'btn btn-lg', 2)} ${cartBtn(c, 'btn btn-ghost btn-lg', 2)}</p>
+  </div>
+</section>
+<section class="wrap course-body">
+  <h2>More free HAZWOPER quizzes</h2>
+  <div class="grid">${QUIZZES.filter(x => x.slug !== q.slug).map(x => quizCard(x, 2)).join('\n')}</div>
+</section>
+` + foot(2, ['cart.js', 'quiz.js']);
+  const dir = path.join(ROOT, 'quizzes', q.slug);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), html);
+}
+
+function buildQuizHub() {
+  const url = `${SITE_URL}/quizzes/`;
+  const ld = jsonLd({ '@context': 'https://schema.org', '@graph': [orgLd,
+    { '@type': 'CollectionPage', '@id': url, url, name: 'Free HAZWOPER Practice Quizzes', isPartOf: { '@id': `${SITE_URL}/#website` },
+      mainEntity: { '@type': 'ItemList', itemListElement: QUIZZES.map((q, i) => ({ '@type': 'ListItem', position: i + 1, url: quizUrl(q), name: q.title })) } },
+    crumbLd([['HAZWOPER Training', SITE_URL + '/'], ['Quizzes', url]])] });
+  const total = QUIZZES.reduce((n, q) => n + q.questions.length, 0);
+  const html = head({ title: `Free HAZWOPER Practice Tests & Quizzes With Answers | ${BRAND}`,
+    desc: `${total} free HAZWOPER practice test questions with answers and explanations: 40 hour, 8 hour refresher, PPE levels, air monitoring, decon, first responder awareness and RCRA.`,
+    canonical: url, depth: 1, extra: ld }) + `
+<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../">HAZWOPER Training</a> › <span>Quizzes</span></nav>
+<section class="wrap course-body">
+  <h1>Free HAZWOPER Practice Tests &amp; Quizzes</h1>
+  <p class="lead">${total} practice questions with instant scoring and an explanation for every answer. No sign-up needed.</p>
+  <div class="grid">${QUIZZES.map(q => quizCard(q, 1)).join('\n')}</div>
+  <h2>Study guides</h2>
+  <div class="grid">${ALL_GUIDES.slice(0, 6).map(g => guideCard(g, 1)).join('\n')}</div>
+</section>
+` + foot(1);
+  fs.mkdirSync(path.join(ROOT, 'quizzes'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'quizzes/index.html'), html);
+}
+
+// ---------- sitewide search ----------
+// Paths are relative to the site root; search.html resolves them.
+function buildSearch() {
+  const idx = [];
+  courses.forEach(c => idx.push({ k: 'Course', t: c.name, u: `courses/${c.slug}/`, d: `${c.duration} · ${money(c.price)} · ${c.citation}`,
+    x: [c.category, c.audience, (c.altTags || []).join(' ')].join(' '), s: c.slug }));
+  ALL_GUIDES.forEach(g => idx.push({ k: 'Guide', t: g.title, u: `guides/${g.slug}/`, d: g.desc,
+    x: withToc(g.body).toc.map(t => t[1]).join(' ') + ' ' + g.faq.map(f => f[0]).join(' ') }));
+  GLOSSARY.forEach(([t, d]) => idx.push({ k: 'Glossary', t, u: `guides/${GLOSSARY_GUIDE.slug}/#${slugify(t)}`, d }));
+  QUIZZES.forEach(q => idx.push({ k: 'Quiz', t: q.title, u: `quizzes/${q.slug}/`, d: q.desc, x: q.questions.map(x => x.q).join(' ') }));
+  ALL_GUIDES.forEach(g => g.faq.forEach(([q, a]) => idx.push({ k: 'FAQ', t: q, u: `guides/${g.slug}/#faq`, d: a })));
+  FAQ.forEach(([q, a]) => idx.push({ k: 'FAQ', t: q, u: '#faq', d: a }));
+  fs.writeFileSync(path.join(ROOT, 'assets/search-index.js'), `// Generated by tools/build.js - sitewide search index.\nvar HZ_SEARCH = ${JSON.stringify(idx)};\n`);
+
+  const html = head({ title: `Search | ${BRAND}`, desc: `Search HAZWOPER courses, guides, quizzes and glossary terms.`, canonical: `${SITE_URL}/search/`, depth: 1 })
+    .replace('content="index, follow', 'content="noindex, follow') + `
+<section class="wrap course-body search-page">
+  <h1>Search HAZWOPER courses, guides &amp; quizzes</h1>
+  <form class="search-big" action="./" method="get" role="search">
+    <label class="sr" for="sq">Search</label>
+    <input id="sq" name="q" type="search" placeholder="Try: 40 hour, refresher, PPE level B, IDLH, Cal/OSHA, RCRA..." autocomplete="off">
+    <button type="submit" class="btn btn-lg">Search</button>
+  </form>
+  <p id="searchStatus" class="muted" aria-live="polite"></p>
+  <ol id="searchResults" class="results"></ol>
+  <div id="searchEmpty" hidden>
+    <p>Nothing matched. Try fewer words, or browse:</p>
+    <ul class="res-list"><li><a href="../#courses">All courses</a></li><li><a href="../guides/">All guides</a></li><li><a href="../quizzes/">All quizzes</a></li><li><a href="../guides/${GLOSSARY_GUIDE.slug}/">Glossary</a></li></ul>
+    <p>Or call <a href="${PHONE_HREF}">${PHONE}</a> and we'll point you to the right training.</p>
+  </div>
+</section>
+` + foot(1, ['cart.js', 'search-index.js', 'site-search.js']);
+  fs.mkdirSync(path.join(ROOT, 'search'), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, 'search/index.html'), html);
+}
+
 // ---------- extras ----------
 function buildExtras() {
-  const urls = [{ loc: SITE_URL + '/', pri: '1.0' }].concat(courses.map(c => ({ loc: c.url, pri: c.group === 'core' ? '0.9' : '0.8' })));
+  const urls = [{ loc: SITE_URL + '/', pri: '1.0' }].concat(courses.map(c => ({ loc: c.url, pri: c.group === 'core' ? '0.9' : '0.8' })),
+    [{ loc: `${SITE_URL}/guides/`, pri: '0.9' }], ALL_GUIDES.map(g => ({ loc: guideUrl(g), pri: '0.8' })),
+    [{ loc: `${SITE_URL}/quizzes/`, pri: '0.8' }], QUIZZES.map(q => ({ loc: quizUrl(q), pri: '0.7' })));
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url><loc>${u.loc}</loc><lastmod>${TODAY}</lastmod><priority>${u.pri}</priority></url>`).join('\n')}
@@ -428,14 +702,48 @@ Sitemap: ${SITE_URL}/sitemap.xml
 
 ${GROUPS.map(g => `### ${g.title}\n\n${courses.filter(c => c.group === g.id).map(c => `- [${c.name}](${c.url}): ${c.duration}, ${money(c.price)}. Meets ${c.citation}.`).join('\n')}`).join('\n\n')}
 
+## Guides
+
+${ALL_GUIDES.map(g => `- [${g.title}](${guideUrl(g)}): ${g.desc}`).join('\n')}
+
+## Free practice quizzes
+
+${QUIZZES.map(q => `- [${q.title}](${quizUrl(q)}): ${q.questions.length} questions with answers.`).join('\n')}
+
 ## FAQ
 
 ${FAQ.map(([q, a]) => `- **${q}** ${a}`).join('\n')}
+
+## Full text
+
+The full text of every guide, the glossary and all quiz questions with answers is at ${SITE_URL}/llms-full.txt
 `);
-  fs.writeFileSync(path.join(ROOT, '404.html'), head({ title: `Page not found | ${BRAND}`, desc: 'Page not found.', canonical: SITE_URL + '/' })
-    .replace(/href="assets\//g, `href="${SITE_URL}/assets/`).replace(/src="assets\//g, `src="${SITE_URL}/assets/`).replace('content="index, follow', 'content="noindex, follow') + `
-<section class="wrap course-body"><h1>Page not found</h1><p><a href="${SITE_URL}/">Browse all HAZWOPER training courses</a></p></section>
-` + foot(0).replace(/(href|src)="(assets|courses)\//g, `$1="${SITE_URL}/$2/`));
+  // Full-text version for answer engines: every guide, glossary term and quiz answer as plain text.
+  const mdLinks = html => html.replace(/\{\{(course|guide|quiz):([a-z0-9-]+)(?:\|([^}]+))?\}\}/g, (_, kind, slug, text) => {
+    const t = { course: COURSE_BY_SLUG, guide: GUIDE_BY_SLUG, quiz: QUIZ_BY_SLUG }[kind][slug];
+    return text || t.name || t.short;
+  });
+  const toText = html => mdLinks(html).replace(/<h2[^>]*>(.*?)<\/h2>/g, '\n\n### $1\n\n').replace(/<li>/g, '\n- ').replace(/<tr>/g, '\n').replace(/<\/t[dh]>/g, ' | ')
+    .replace(/<\/p>/g, '\n\n').replace(/<dt>(.*?)<\/dt>/g, '\n- **$1**: ').replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&le;/g, '<=').replace(/&ge;/g, '>=')
+    .replace(/&amp;/g, '&').replace(/[ \t]+/g, ' ').replace(/\n /g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  fs.writeFileSync(path.join(ROOT, 'llms-full.txt'), `# ${BRAND} - HAZWOPER guides, glossary and practice questions (full text)
+
+> Source: ${SITE_URL}/ . Courses: ${SITE_URL}/#courses . Contact: ${EMAIL}, ${PHONE}.
+
+${ALL_GUIDES.map(g => `## ${g.title}\n\nURL: ${guideUrl(g)}\n\n${toText(g.body)}${g.faq.length ? '\n\n### FAQ\n\n' + g.faq.map(([q, a]) => `- **${q}** ${a}`).join('\n') : ''}\n\nRelated courses: ${g.related.map(s => `${COURSE_BY_SLUG[s].name} (${COURSE_BY_SLUG[s].url})`).join('; ')}`).join('\n\n---\n\n')}
+
+---
+
+## Practice quiz questions and answers
+
+${QUIZZES.map(q => `### ${q.title}\n\nURL: ${quizUrl(q)}\n\n${q.questions.map((x, i) => `${i + 1}. ${x.q}\n   Answer: ${x.o[x.a]}. ${x.e}`).join('\n')}`).join('\n\n')}
+`);
+  // 404 is served at any path, so every relative link becomes absolute.
+  const absolute = html => html.replace(/(href|src|action)="(?!https?:|mailto:|tel:)(?:\.\/)?([^"]*)"/g, `$1="${SITE_URL}/$2"`);
+  fs.writeFileSync(path.join(ROOT, '404.html'), absolute(head({ title: `Page not found | ${BRAND}`, desc: 'Page not found.', canonical: SITE_URL + '/' })
+    .replace('content="index, follow', 'content="noindex, follow') + `
+<section class="wrap course-body"><h1>Page not found</h1><p>Try the search box above, or <a href="./">browse all HAZWOPER training courses</a>, <a href="guides/">guides</a> and <a href="quizzes/">quizzes</a>.</p></section>
+` + foot(0)));
   fs.writeFileSync(path.join(ROOT, 'data/courses.json'), JSON.stringify(courses.map(({ slug, name, price, duration, citation, group, url }) => ({ slug, name, price, duration, citation, group, url })), null, 1) + '\n');
 }
 
@@ -452,17 +760,12 @@ var PHONE = ${JSON.stringify(PHONE)};
 var PHONE_HREF = ${JSON.stringify(PHONE_HREF.replace('tel:', ''))};
 // true sends every order as an enrollment-request email instead of card checkout.
 var CHECKOUT_DISABLED = false;
-var BULK_TIERS = ${JSON.stringify(BULK_TIERS)};
+// Every seat is charged at full list price; there are no volume discounts.
 var HZ_ITEMS = ${JSON.stringify(items)};
 
 function activeStripeKey() { return STRIPE_PUBLISHABLE_KEY; }
 function findHzItem(slug) { return Object.prototype.hasOwnProperty.call(HZ_ITEMS, slug) ? HZ_ITEMS[slug] : null; }
 function formatMoney(n) { return Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-function tierForSeats(seats) {
-  for (var i = BULK_TIERS.length - 1; i >= 0; i--) if (seats >= BULK_TIERS[i].min) return BULK_TIERS[i];
-  return BULK_TIERS[0];
-}
-function tierPrice(price, tier) { return Math.round(price * (1 - (tier.discount || 0)) * 100) / 100; }
 `);
 
   const states = 'AL Alabama|AK Alaska|AZ Arizona|AR Arkansas|CA California|CO Colorado|CT Connecticut|DE Delaware|DC District of Columbia|FL Florida|GA Georgia|HI Hawaii|ID Idaho|IL Illinois|IN Indiana|IA Iowa|KS Kansas|KY Kentucky|LA Louisiana|ME Maine|MD Maryland|MA Massachusetts|MI Michigan|MN Minnesota|MS Mississippi|MO Missouri|MT Montana|NE Nebraska|NV Nevada|NH New Hampshire|NJ New Jersey|NM New Mexico|NY New York|NC North Carolina|ND North Dakota|OH Ohio|OK Oklahoma|OR Oregon|PA Pennsylvania|RI Rhode Island|SC South Carolina|SD South Dakota|TN Tennessee|TX Texas|UT Utah|VT Vermont|VA Virginia|WA Washington|WV West Virginia|WI Wisconsin|WY Wyoming'
@@ -473,7 +776,7 @@ function tierPrice(price, tier) { return Math.round(price * (1 - (tier.discount 
     .replace('content="index, follow', 'content="noindex, follow') + `
 <section class="wrap checkout-wrap">
   <div class="checkout-header">
-    <h1>Checkout</h1>
+    <h1>Your cart &amp; checkout</h1>
     <p id="enrollModeNote">Send this enrollment request and our team replies by email with your order confirmation and payment options (credit card, or purchase order for companies). Learner logins are emailed once the order is confirmed. Prefer to talk? Call <a href="${PHONE_HREF}">${PHONE}</a> or email <a href="mailto:${ENROLL_EMAIL}">${ENROLL_EMAIL}</a>.</p>
   </div>
 
@@ -493,15 +796,21 @@ function tierPrice(price, tier) { return Math.round(price * (1 - (tier.discount 
     <p><button type="button" id="copyRequestBtn" class="btn btn-ghost">Copy request</button> <a id="reopenEmailLink" class="btn" href="mailto:${ENROLL_EMAIL}">Open email again</a></p>
   </div>
 
+  <div id="cartEmpty" class="done-card" hidden>
+    <h2>Your cart is empty</h2>
+    <p>Add the courses you need, then come back here to check out once for all of them.</p>
+    <p><a class="btn btn-lg" href="./#courses">Browse courses</a> <a class="btn btn-ghost btn-lg" href="guides/">Not sure? Read the guides</a></p>
+  </div>
+
   <form id="stripeCheckoutForm" class="checkout-grid">
     <div class="checkout-main">
       <div class="checkout-section">
-        <h2>Seats &amp; contact information</h2>
-        <div class="form-group">
-          <label for="seatCount">Number of learners (seats) <span class="req">*</span></label>
-          <input type="number" id="seatCount" class="form-control" required min="1" max="10000" step="1" value="1" inputmode="numeric">
-          <p class="hint">Volume pricing applies automatically from 2 seats. Learner names and emails can be added after the order is confirmed.</p>
-        </div>
+        <h2>Courses in your cart</h2>
+        <ul id="cartLines" class="cart-lines"></ul>
+        <p class="hint">Seats = number of learners for each course. Every seat is full list price. Learner names and emails can be added after the order is confirmed. <a href="./#courses">Add more courses</a></p>
+      </div>
+      <div class="checkout-section">
+        <h2>Contact information</h2>
         <div class="form-row">${field('billingFirstName', 'First name', 'autocomplete="given-name"')}${field('billingLastName', 'Last name', 'autocomplete="family-name"')}</div>
         ${field('billingCompany', 'Company / organization', 'autocomplete="organization"', false)}
         <div class="form-row">${field('billingPhone', 'Phone', 'type="tel" autocomplete="tel"')}${field('billingEmail', 'Email address', 'type="email" autocomplete="email"')}</div>
@@ -537,22 +846,25 @@ function tierPrice(price, tier) { return Math.round(price * (1 - (tier.discount 
     <aside class="checkout-sidebar">
       <div class="summary">
         <h2>Order summary</h2>
-        <div class="sum-line"><div><strong id="summaryCourseName">-</strong><span id="summaryCourseQty"></span></div><span id="summaryCourseAmount"></span></div>
-        <div class="sum-row"><span>Subtotal</span><span id="summarySubtotal"></span></div>
-        <div class="sum-row" id="summaryDiscountRow" hidden><span id="summaryDiscountLabel"></span><span id="summaryDiscount"></span></div>
+        <div id="summaryLines"></div>
         <div class="sum-row sum-total"><span>Total</span><span id="summaryTotal"></span></div>
         <ul class="checks small"><li>Instant certificate &amp; wallet card</li><li>Self-paced, 24/7 access</li><li>Support by phone and email</li></ul>
       </div>
     </aside>
   </form>
 </section>
-` + foot(0, ['config.js', 'checkout.js']);
+` + foot(0, ['config.js', 'cart.js', 'checkout.js']);
   fs.writeFileSync(path.join(ROOT, 'checkout.html'), html);
 }
 
-fs.rmSync(path.join(ROOT, 'courses'), { recursive: true, force: true });
+['courses', 'guides', 'quizzes', 'search'].forEach(d => fs.rmSync(path.join(ROOT, d), { recursive: true, force: true }));
 buildIndex();
 courses.forEach(buildCourse);
+ALL_GUIDES.forEach(buildGuide);
+buildGuidesHub();
+QUIZZES.forEach(buildQuiz);
+buildQuizHub();
+buildSearch();
 buildExtras();
 buildCheckout();
-console.log(`Built index + ${courses.length} course pages for ${SITE_URL}`);
+console.log(`Built index + ${courses.length} course, ${ALL_GUIDES.length} guide and ${QUIZZES.length} quiz pages for ${SITE_URL}`);

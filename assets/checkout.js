@@ -2,9 +2,11 @@
 // land in the hazwoper-osha.com LMS the same way:
 //   1. Stripe.js creates a card PaymentMethod
 //   2. POST {API_BASE_URL}/add_new_user  -> customer id
-//   3. POST {API_BASE_URL}/add_order     -> order (+ clientSecret to confirm, if the API asks)
-// Courses without an LMS id (assets/config.js, from data/lms-ids.json) go by
-// enrollment-request email instead.
+//   3. POST {API_BASE_URL}/add_order     -> one order carrying every course id in the cart
+//                                           (+ clientSecret to confirm, if the API asks)
+// The cart (assets/cart.js) can hold any number of courses; every seat is full list price.
+// If any course lacks an LMS id (assets/config.js, from data/lms-ids.json) the whole
+// order goes by enrollment-request email instead.
 document.addEventListener('DOMContentLoaded', function () {
   var form = document.getElementById('stripeCheckoutForm');
   if (!form) return;
@@ -16,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
   var paymentErrorAlert = document.getElementById('payment-error');
   var successView = document.getElementById('checkoutSuccessView');
   var requestError = document.getElementById('request-error');
+  var emptyView = document.getElementById('cartEmpty');
+  var header = document.querySelector('.checkout-header');
 
   var getErrorMessage = function (err) {
     if (!err) return 'Payment failed. Please check your card details and try again.';
@@ -26,47 +30,97 @@ document.addEventListener('DOMContentLoaded', function () {
     try { return JSON.stringify(err); } catch (e) { return 'An unexpected error occurred during payment processing.'; }
   };
 
+  // ?item=<slug>[&seats=n] (Enroll Now buttons, no-JS add-to-cart links) adds that course to the cart.
   var params = new URLSearchParams(window.location.search);
-  var itemSlug = params.get('item') || 'osha-40-hour-hazwoper-training';
-  var selected = findHzItem(itemSlug) || findHzItem((itemSlug = 'osha-40-hour-hazwoper-training'));
-  var courseIds = [selected.courseId];
+  var itemParam = params.get('item');
+  if (itemParam && findHzItem(itemParam)) {
+    var seatParam = parseInt(params.get('seats'), 10);
+    HZCart.add(itemParam, 1);
+    if (seatParam > 0) HZCart.setQty(itemParam, seatParam);
+  }
+  if (itemParam && window.history.replaceState) window.history.replaceState(null, '', window.location.pathname);
 
-  // Card checkout needs an LMS course id; a course not mapped yet is sent as an
-  // enrollment request.
-  var requestMode = CHECKOUT_DISABLED || !activeStripeKey() ||
-    courseIds.some(function (id) { return !id; });
-
-  var seatInput = document.getElementById('seatCount');
-  var seatParam = parseInt(params.get('seats'), 10);
-  if (seatInput && seatParam > 0) seatInput.value = String(seatParam);
-  var getSeats = function () {
-    var n = seatInput ? parseInt(seatInput.value, 10) : 1;
-    return n > 0 ? n : 1;
+  // Cart lines with catalog data; unknown slugs (stale carts) are dropped.
+  var getLines = function () {
+    return HZCart.items().map(function (l) {
+      var item = findHzItem(l.slug);
+      return item ? { slug: l.slug, qty: l.qty, item: item, amount: Math.round(item.price * l.qty * 100) / 100 } : null;
+    }).filter(Boolean);
   };
-
-  var priceFor = function (seats) {
-    var tier = tierForSeats(seats);
-    var subtotal = Math.round(selected.price * seats * 100) / 100;
-    var total = Math.round(tierPrice(selected.price, tier) * seats * 100) / 100;
-    return { tier: tier, subtotal: subtotal, total: total, discount: Math.round((subtotal - total) * 100) / 100 };
+  var getTotal = function (lines) {
+    return Math.round(lines.reduce(function (n, l) { return n + l.amount; }, 0) * 100) / 100;
+  };
+  var isRequestMode = function (lines) {
+    return CHECKOUT_DISABLED || !activeStripeKey() || lines.some(function (l) { return !l.item.courseId; });
   };
 
   var set = function (id, text) { var el = document.getElementById(id); if (el) el.textContent = text; };
-  var updateSummary = function () {
-    var seats = getSeats();
-    var p = priceFor(seats);
-    set('summaryCourseQty', seats + (seats === 1 ? ' seat' : ' seats') + ' × $' + formatMoney(selected.price));
-    set('summaryCourseAmount', '$' + formatMoney(p.subtotal));
-    set('summarySubtotal', '$' + formatMoney(p.subtotal));
-    set('summaryTotal', '$' + formatMoney(p.total));
-    var discountRow = document.getElementById('summaryDiscountRow');
-    if (discountRow) discountRow.hidden = !(p.discount > 0);
-    set('summaryDiscountLabel', 'Volume discount (' + Math.round((p.tier.discount || 0) * 100) + '%)');
-    set('summaryDiscount', '-$' + formatMoney(p.discount));
-    return p;
+  var el = function (tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
   };
 
-  var fieldValue = function (id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  var renderCart = function () {
+    var lines = getLines();
+    var empty = lines.length === 0;
+    form.hidden = empty;
+    emptyView.hidden = !empty;
+
+    var list = document.getElementById('cartLines');
+    var summary = document.getElementById('summaryLines');
+    list.textContent = '';
+    summary.textContent = '';
+    lines.forEach(function (l) {
+      var li = el('li', 'cart-line');
+      var info = el('div', 'cart-info');
+      info.appendChild(el('strong', null, l.item.name));
+      info.appendChild(el('span', 'muted small', '$' + formatMoney(l.item.price) + ' per seat'));
+      var qtyWrap = el('label', 'cart-qty');
+      qtyWrap.appendChild(el('span', 'sr', 'Seats for ' + l.item.name));
+      var qty = el('input', 'form-control');
+      qty.type = 'number'; qty.min = '1'; qty.max = '10000'; qty.step = '1'; qty.inputMode = 'numeric';
+      qty.value = String(l.qty);
+      qty.setAttribute('data-slug', l.slug);
+      qtyWrap.appendChild(qty);
+      qtyWrap.appendChild(el('span', 'small', 'seats'));
+      var amount = el('span', 'cart-amount', '$' + formatMoney(l.amount));
+      var remove = el('button', 'link-btn', 'Remove');
+      remove.type = 'button';
+      remove.setAttribute('data-remove', l.slug);
+      remove.setAttribute('aria-label', 'Remove ' + l.item.name);
+      li.appendChild(info); li.appendChild(qtyWrap); li.appendChild(amount); li.appendChild(remove);
+      list.appendChild(li);
+
+      var row = el('div', 'sum-line');
+      var left = el('div');
+      left.appendChild(el('strong', null, l.item.name));
+      left.appendChild(el('span', null, l.qty + (l.qty === 1 ? ' seat' : ' seats') + ' × $' + formatMoney(l.item.price)));
+      row.appendChild(left);
+      row.appendChild(el('span', null, '$' + formatMoney(l.amount)));
+      summary.appendChild(row);
+    });
+    set('summaryTotal', '$' + formatMoney(getTotal(lines)));
+    applyMode(lines);
+    return lines;
+  };
+
+  var cartLines = document.getElementById('cartLines');
+  cartLines.addEventListener('change', function (e) {
+    var slug = e.target.getAttribute('data-slug');
+    if (!slug) return;
+    var n = parseInt(e.target.value, 10);
+    HZCart.setQty(slug, n > 0 ? n : 1);
+  });
+  cartLines.addEventListener('click', function (e) {
+    var slug = e.target.getAttribute('data-remove');
+    if (slug) HZCart.remove(slug);
+  });
+  document.addEventListener('hz:cart', renderCart);
+  window.addEventListener('storage', renderCart);
+
+  var fieldValue = function (id) { var f = document.getElementById(id); return f ? f.value.trim() : ''; };
 
   var setButtonLoading = function (isLoading) {
     if (!submitPaymentBtn) return;
@@ -91,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   var mountCard = function () {
-    if (!window.Stripe) return;
+    if (!window.Stripe || cardElement) return;
     stripe = window.Stripe(activeStripeKey());
     cardElement = stripe.elements().create('card', {
       style: { base: { fontSize: '16px', color: '#171717', '::placeholder': { color: '#a1a1aa' } } },
@@ -100,61 +154,71 @@ document.addEventListener('DOMContentLoaded', function () {
     cardElement.mount('#payment-element');
   };
 
-  // ---- page setup ----
-  set('summaryCourseName', selected.name);
-  updateSummary();
-  if (seatInput) seatInput.addEventListener('input', updateSummary);
-
+  // ---- request vs card mode ----
   var requestSection = document.getElementById('requestSection');
   var paymentSection = document.getElementById('paymentSection');
   var addressFields = document.getElementById('billingAddressFields');
-  if (requestMode) {
-    requestSection.hidden = false;
-    paymentSection.hidden = true;
-    addressFields.hidden = true;
-    Array.prototype.forEach.call(addressFields.querySelectorAll('[required]'), function (el) { el.required = false; });
-  } else {
-    requestSection.hidden = true;
-    paymentSection.hidden = false;
-    var note = document.getElementById('enrollModeNote');
-    if (note) note.innerHTML = 'Pay securely by card below. For purchase-order billing, call <a href="tel:' + PHONE_HREF + '">' + PHONE + '</a> or email <a href="mailto:' + ENROLL_EMAIL + '">' + ENROLL_EMAIL + '</a>.';
-    loadStripeJs(mountCard);
-  }
+  var addressRequired = Array.prototype.slice.call(addressFields.querySelectorAll('[required]'));
+  var note = document.getElementById('enrollModeNote');
+  var requestNote = note ? note.innerHTML : '';
+  var requestMode = true;
+  var applyMode = function (lines) {
+    requestMode = isRequestMode(lines);
+    requestSection.hidden = !requestMode;
+    paymentSection.hidden = requestMode;
+    addressFields.hidden = requestMode;
+    addressRequired.forEach(function (f) { f.required = !requestMode; });
+    if (note) {
+      note.innerHTML = requestMode ? requestNote :
+        'Pay once by card for every course in your cart. For purchase-order billing, call <a href="tel:' + PHONE_HREF + '">' + PHONE + '</a> or email <a href="mailto:' + ENROLL_EMAIL + '">' + ENROLL_EMAIL + '</a>.';
+    }
+    if (!requestMode && lines.length) loadStripeJs(mountCard);
+  };
+
+  renderCart();
+
+  var gaItems = function (lines) {
+    return lines.map(function (l) { return { item_id: l.slug, item_name: l.item.name, price: l.item.price, quantity: l.qty }; });
+  };
 
   // ---- enrollment request (email) ----
   var sendEnrollmentRequest = function () {
     if (requestError) requestError.hidden = true;
-    var seats = getSeats();
-    var p = updateSummary();
-    var msg = [
-      'Enrollment request from ' + ORDER_FROM,
+    var lines = getLines();
+    if (!lines.length) return;
+    var total = getTotal(lines);
+    var seats = lines.reduce(function (n, l) { return n + l.qty; }, 0);
+    var msg = ['Enrollment request from ' + ORDER_FROM, '', 'Courses:'];
+    lines.forEach(function (l) {
+      msg.push('- ' + l.item.name + ' (' + l.slug + '): ' + l.qty + (l.qty === 1 ? ' seat' : ' seats') + ' × $' + formatMoney(l.item.price) +
+        ' = $' + formatMoney(l.amount) + ' | LMS course ID: ' + (l.item.courseId || 'not mapped yet'));
+    });
+    msg.push(
       '',
-      'Course: ' + selected.name + ' (' + itemSlug + ')',
-      'Seats: ' + seats,
-      'List price: $' + formatMoney(selected.price) + ' per seat',
-      'Estimated total: $' + formatMoney(p.total) + (p.discount > 0 ? ' after ' + Math.round(p.tier.discount * 100) + '% volume discount' : ''),
-      'LMS course ID: ' + (courseIds.filter(Boolean).join(', ') || 'not mapped yet'),
+      'Total: $' + formatMoney(total),
+      'All LMS course IDs: ' + (lines.map(function (l) { return l.item.courseId; }).filter(Boolean).join(', ') || 'none mapped yet'),
       '',
       'Name: ' + fieldValue('billingFirstName') + ' ' + fieldValue('billingLastName'),
       'Company: ' + (fieldValue('billingCompany') || '-'),
       'Email: ' + fieldValue('billingEmail'),
       'Phone: ' + fieldValue('billingPhone')
-    ];
+    );
     var notes = fieldValue('requestNotes');
     if (notes) msg.push('', 'Notes: ' + notes);
     var body = msg.join('\n');
-    var subject = 'Enrollment request: ' + selected.name + ' (' + seats + (seats === 1 ? ' seat)' : ' seats)');
+    var subject = 'Enrollment request: ' + (lines.length === 1 ? lines[0].item.name : lines.length + ' courses') +
+      ' (' + seats + (seats === 1 ? ' seat)' : ' seats)');
     var href = 'mailto:' + ENROLL_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 
     document.getElementById('requestSummaryText').textContent = 'To: ' + ENROLL_EMAIL + '\nSubject: ' + subject + '\n\n' + body;
     document.getElementById('reopenEmailLink').href = href;
     form.hidden = true;
-    document.querySelector('.checkout-header').hidden = true;
+    header.hidden = true;
     var sentView = document.getElementById('requestSentView');
     sentView.hidden = false;
     sentView.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (typeof window.gtag === 'function') {
-      window.gtag('event', 'generate_lead', { currency: 'USD', value: p.total, items: [{ item_id: itemSlug, item_name: selected.name, price: selected.price, quantity: seats }] });
+      window.gtag('event', 'generate_lead', { currency: 'USD', value: total, items: gaItems(lines) });
     }
     window.location.href = href;
   };
@@ -168,6 +232,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // ---- card checkout ----
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
+    var lines = getLines();
+    if (!lines.length) { renderCart(); return; }
     if (requestMode) { sendEnrollmentRequest(); return; }
 
     setButtonLoading(true);
@@ -212,8 +278,9 @@ document.addEventListener('DOMContentLoaded', function () {
       console.warn('add_new_user API call notice:', userErr);
     }
 
-    // STEP 3: order
+    // STEP 3: one order with every course id in the cart, each at full price per seat
     var orderId = 'HZ-' + Math.floor(100000 + Math.random() * 900000);
+    var total = getTotal(lines);
     try {
       var orderRes = await fetch(API_BASE_URL + '/add_order', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -235,8 +302,8 @@ document.addEventListener('DOMContentLoaded', function () {
           billing_state: addr.state, billing_postcode: addr.postal_code, billing_country: addr.country,
           shipping_address_1: addr.line1, shipping_address_2: addr.line2, shipping_city: addr.city,
           shipping_state: addr.state, shipping_postcode: addr.postal_code, shipping_country: addr.country,
-          courses: courseIds.map(function (cid) {
-            return { course_id: cid, quantity: getSeats(), users: [{ first_name: firstName, last_name: lastName, email: email, user_name: '' }] };
+          courses: lines.map(function (l) {
+            return { course_id: l.item.courseId, quantity: l.qty, users: [{ first_name: firstName, last_name: lastName, email: email, user_name: '' }] };
           })
         })
       });
@@ -256,14 +323,16 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
+    document.removeEventListener('hz:cart', renderCart);
+    HZCart.clear();
     form.hidden = true;
-    document.querySelector('.checkout-header').hidden = true;
+    header.hidden = true;
     set('successOrderId', orderId.charAt(0) === '#' ? orderId : '#' + orderId);
     set('successUserEmail', email || 'your email');
     successView.hidden = false;
     successView.scrollIntoView({ behavior: 'smooth', block: 'center' });
     if (typeof window.gtag === 'function') {
-      window.gtag('event', 'purchase', { transaction_id: orderId, currency: 'USD', value: priceFor(getSeats()).total });
+      window.gtag('event', 'purchase', { transaction_id: orderId, currency: 'USD', value: total, items: gaItems(lines) });
     }
     setButtonLoading(false);
   });

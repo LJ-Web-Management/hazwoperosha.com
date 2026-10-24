@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, claude/exciting-heisenberg-7wyyfk]
+    branches: [main, claude/exciting-heisenberg-7wyyfk, claude/ecstatic-clarke-uqa3gz]
   workflow_dispatch:
 
 permissions:
@@ -30,7 +30,7 @@ jobs:
       - name: Assemble publish folder
         run: |
           mkdir _site
-          cp -r index.html checkout.html 404.html robots.txt sitemap.xml llms.txt .nojekyll assets courses _site/
+          cp -r index.html checkout.html 404.html robots.txt sitemap.xml llms.txt llms-full.txt .nojekyll assets courses guides quizzes search _site/
       - uses: actions/configure-pages@v5
         with:
           enablement: true
