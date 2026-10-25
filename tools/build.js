@@ -494,7 +494,7 @@ function guideCard(g, depth = 0) {
   return `<article class="card card-res">
   <div class="card-top"><span class="pill pill-soft">${esc(GUIDE_COPY.cardLabel || 'Guide')}</span><span class="muted small">${readMins(g.body)} min read</span></div>
   <h3><a href="${rel}guides/${g.slug}/">${esc(g.title)}</a></h3>
-  <p class="cite">${esc(g.desc.slice(0, 140).replace(/\s\S*$/, ''))}...</p>
+  <p class="cite">${GUIDE_COPY.fullCardDesc ? esc(g.desc) : `${esc(g.desc.slice(0, 140).replace(/\s\S*$/, ''))}...`}</p>
   <div class="card-actions"><a class="link" href="${rel}guides/${g.slug}/">${esc(GUIDE_COPY.readLink || 'Read the guide')}</a></div>
 </article>`;
 }
@@ -503,7 +503,7 @@ function quizCard(q, depth = 0) {
   return `<article class="card card-res">
   <div class="card-top"><span class="pill pill-soft">Free quiz</span><span class="muted small">${q.questions.length} questions</span></div>
   <h3><a href="${rel}quizzes/${q.slug}/">${esc(q.title)}</a></h3>
-  <p class="cite">${esc(q.desc.slice(0, 120).replace(/\s\S*$/, ''))}...</p>
+  <p class="cite">${QUIZ_COPY.fullCardDesc ? esc(q.desc) : `${esc(q.desc.slice(0, 120).replace(/\s\S*$/, ''))}...`}</p>
   <div class="card-actions"><a class="btn" href="${rel}quizzes/${q.slug}/">Start quiz</a></div>
 </article>`;
 }
