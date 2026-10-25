@@ -45,6 +45,14 @@ const hoursNum = d => { const m = /(\d+)\s*(Hour|Min)/i.exec(d); if (!m) return 
 const isoDuration = d => { const m = /(\d+)\s*(Hour|Min)/i.exec(d); return m ? (/min/i.test(m[2]) ? `PT${m[1]}M` : `PT${m[1]}H`) : undefined; };
 const jsonLd = obj => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
 
+// Optional per-site wording (data/copy.js exports ctx => ({...})). Anything it leaves out uses the defaults below.
+const COPY = fs.existsSync(path.join(ROOT, 'data/copy.js'))
+  ? require('../data/copy.js')({ BRAND, PHONE, PHONE_HREF, EMAIL, money }) : {};
+const HOME = COPY.home || {};
+const COURSE_COPY = COPY.course || {};
+const GUIDE_COPY = COPY.guides || {};
+const QUIZ_COPY = COPY.quizzes || {};
+
 // ---------- grouping ----------
 const GROUPS = [
   { id: 'core', title: 'Core OSHA HAZWOPER Certification', blurb: 'The federal OSHA 29 CFR 1910.120 training levels: 40-hour, 24-hour and 4-hour first responder awareness.' },
@@ -55,6 +63,7 @@ const GROUPS = [
   { id: 'spill', title: 'Spill Response, Air Monitoring & Micro-Modules', blurb: 'Short focused modules on PPE levels, decontamination, air monitoring, site characterization and spill response.' },
   { id: 'trainer', title: 'HAZWOPER Train-the-Trainer', blurb: 'Become a qualified in-house HAZWOPER instructor for your organization.' },
 ];
+GROUPS.forEach(g => Object.assign(g, (COPY.groups || {})[g.id]));
 function groupOf(c) {
   const n = c.name;
   if (/Train-the-Trainer/i.test(n)) return 'trainer';
@@ -81,16 +90,18 @@ courses.forEach(c => { if (slugs.has(c.slug)) throw new Error('duplicate slug ' 
 
 // ---------- copy ----------
 function describe(c) {
+  if (COPY.describe) return COPY.describe(c);
   const who = c.audience ? ` It is designed for workers in ${c.audience.charAt(0).toLowerCase() + c.audience.slice(1)}.` : '';
   const m = /^(\d+)\s*(Hour|Min)/i.exec(c.duration);
   const len = m ? `${m[1]}-${/min/i.test(m[2]) ? 'minute' : 'hour'} online` : 'online';
   return `${c.name} is a self-paced, ${len} course from ${BRAND} that meets ${c.citation}.${who} Start immediately, train on any device, pause and resume at any time, and download your certificate of completion as soon as you pass.`;
 }
 function metaDesc(c) {
+  if (COPY.metaDesc) return COPY.metaDesc(c).slice(0, 300);
   return `${c.name} online: ${c.duration}, ${money(c.price)}. Meets ${c.citation}. Self-paced, instant certificate, 24/7 access. Enroll today with ${BRAND}.`.slice(0, 300);
 }
 
-const FAQ = [
+const FAQ = COPY.faq || [
   ['What is HAZWOPER training?', 'HAZWOPER stands for Hazardous Waste Operations and Emergency Response. It is the OSHA standard at 29 CFR 1910.120 (and 29 CFR 1926.65 for construction) that requires training for workers who clean up hazardous waste sites, work at RCRA treatment, storage and disposal (TSD) facilities, or respond to hazardous substance releases.'],
   ['Who needs 40 hour HAZWOPER training?', 'General site workers at uncontrolled hazardous waste sites, such as laborers, equipment operators and remediation technicians, who may be exposed to hazardous substances at or above permissible exposure limits must complete 40 hours of off-site instruction plus 3 days of supervised field experience under 29 CFR 1910.120(e)(3)(i).'],
   ['What is the difference between 40 hour and 24 hour HAZWOPER?', 'The 40-hour course is for general site workers with potential exposure above permissible limits. The 24-hour course is for occasional site workers, or workers in areas already monitored and characterized where exposures are below permissible limits and respirators are not required, per 29 CFR 1910.120(e)(3)(ii) and (iii).'],
@@ -136,16 +147,13 @@ ${extra}
   <div class="wrap header-row">
     <a class="logo" href="${rel || './'}">${logoHtml(rel, 'header')}</a>
     <nav aria-label="Main">
-      <a href="${rel}#courses">Courses</a>
-      <a href="${rel}guides/">Guides</a>
-      <a href="${rel}quizzes/">Quizzes</a>
-      <a href="${rel}#faq">FAQ</a>
+      ${NAV.map(([label, href]) => `<a href="${rel}${href}">${esc(label)}</a>`).join('\n      ')}
       <a class="nav-phone" href="${PHONE_HREF}">${PHONE}</a>
       <a class="nav-cart" href="${rel}checkout.html" aria-label="Cart"><span aria-hidden="true">Cart</span> <span class="cart-count" data-cart-count>0</span></a>
     </nav>
     <form class="site-search" action="${rel}search/" method="get" role="search">
       <label class="sr" for="site-q">Search the site</label>
-      <input id="site-q" name="q" type="search" placeholder="Search courses, guides, quizzes..." autocomplete="off">
+      <input id="site-q" name="q" type="search" placeholder="${esc(COPY.searchPlaceholder || 'Search courses, guides, quizzes...')}" autocomplete="off">
     </form>
   </div>
 </header>
@@ -158,15 +166,15 @@ function foot(depth = 0, scripts = ['cart.js', 'search.js']) {
   <div class="wrap footer-grid">
     <div>
       <a class="logo" href="${rel || './'}">${logoHtml(rel, 'footer')}</a>
-      <p>Online OSHA HAZWOPER, RCRA and hazardous materials training for workers, supervisors and employers across the United States.</p>
+      <p>${esc(COPY.footerBlurb || 'Online OSHA HAZWOPER, RCRA and hazardous materials training for workers, supervisors and employers across the United States.')}</p>
     </div>
     <div>
       <h2>Popular courses</h2>
       <ul>${courses.slice(0, 5).map(c => `<li><a href="${rel}courses/${c.slug}/">${esc(c.name)}</a></li>`).join('')}</ul>
     </div>
     <div>
-      <h2>Guides &amp; quizzes</h2>
-      <ul>${ALL_GUIDES.slice(0, 5).map(g => `<li><a href="${rel}guides/${g.slug}/">${esc(g.short)}</a></li>`).join('')}<li><a href="${rel}guides/">All HAZWOPER guides</a></li><li><a href="${rel}quizzes/">Free practice quizzes</a></li></ul>
+      <h2>${COPY.footerResourcesTitle || 'Guides &amp; quizzes'}</h2>
+      <ul>${ALL_GUIDES.slice(0, 5).map(g => `<li><a href="${rel}guides/${g.slug}/">${esc(g.short)}</a></li>`).join('')}<li><a href="${rel}guides/">${esc(GUIDE_COPY.allLink || 'All HAZWOPER guides')}</a></li>${PAGES.map(pg => `<li><a href="${rel}${pg.slug}/">${esc(pg.short)}</a></li>`).join('')}${QUIZZES.length ? `<li><a href="${rel}quizzes/">${esc(QUIZ_COPY.allLink || 'Free practice quizzes')}</a></li>` : ''}</ul>
     </div>
     <div>
       <h2>Contact</h2>
@@ -216,7 +224,10 @@ const GLOSSARY_GUIDE = {
 <dl class="glossary">${GLOSSARY.map(([t, d, g]) => `<div id="${slugify(t)}"><dt>${esc(t)}</dt><dd>${esc(d)}${g ? ` {{guide:${g}|Learn more}}` : ''}</dd></div>`).join('\n')}</dl>`,
   faq: [],
 };
-const ALL_GUIDES = GUIDES.concat(GLOSSARY_GUIDE);
+const ALL_GUIDES = GLOSSARY.length ? GUIDES.concat(GLOSSARY_GUIDE) : GUIDES;
+// Standalone pages (tools, calculators) from data/copy.js, built at /<slug>/.
+const PAGES = COPY.pages || [];
+const NAV = COPY.nav || [['Courses', '#courses'], ['Guides', 'guides/']].concat(QUIZZES.length ? [['Quizzes', 'quizzes/']] : [], [['FAQ', '#faq']]);
 const GUIDE_BY_SLUG = Object.fromEntries(ALL_GUIDES.map(g => [g.slug, g]));
 const QUIZ_BY_SLUG = Object.fromEntries(QUIZZES.map(q => [q.slug, q]));
 const guideUrl = g => `${SITE_URL}/guides/${g.slug}/`;
@@ -224,7 +235,21 @@ const quizUrl = q => `${SITE_URL}/quizzes/${q.slug}/`;
 
 // Replaces {{course:slug|text}}, {{guide:slug|text}} and {{quiz:slug|text}} with links; unknown slugs fail the build.
 function links(html, rel) {
-  return html.replace(/\{\{(course|guide|quiz):([a-z0-9-]+)(?:\|([^}]+))?\}\}/g, (_, kind, slug, text) => {
+  const depth = (rel.match(/\.\.\//g) || []).length;
+  html = html.replace(/\{\{cards:(guides|quizzes)\}\}/g, (_, kind) => `<div class="grid">${(kind === 'guides'
+    ? ALL_GUIDES.map(g => guideCard(g, depth)) : QUIZZES.map(q => quizCard(q, depth))).join('\n')}</div>`);
+  html = html.replace(/\{\{(price|enroll|cart):([a-z0-9-]+)(?:\|([^}]+))?\}\}/g, (_, kind, slug, cls) => {
+    const c = COURSE_BY_SLUG[slug];
+    if (!c) throw new Error(`unknown course in ${kind} token: ${slug}`);
+    if (kind === 'price') return money(c.price);
+    return kind === 'enroll' ? enrollBtn(c, cls || 'btn btn-lg', depth) : cartBtn(c, cls || 'btn', depth);
+  });
+  return html.replace(/\{\{(course|guide|quiz|page):([a-z0-9-]+)(?:\|([^}]+))?\}\}/g, (_, kind, slug, text) => {
+    if (kind === 'page') {
+      const pg = PAGES.find(x => x.slug === slug);
+      if (!pg) throw new Error(`unknown page link: ${slug}`);
+      return `<a href="${rel}${slug}/">${esc(text || pg.short)}</a>`;
+    }
     const target = { course: COURSE_BY_SLUG, guide: GUIDE_BY_SLUG, quiz: QUIZ_BY_SLUG }[kind][slug];
     if (!target) throw new Error(`unknown ${kind} link: ${slug}`);
     const dir = { course: 'courses', guide: 'guides', quiz: 'quizzes' }[kind];
@@ -269,8 +294,8 @@ function courseLd(c) {
 // ---------- index ----------
 function buildIndex() {
   const total = courses.length;
-  const title = `HAZWOPER Training Online | OSHA 40, 24 & 8 Hour HAZWOPER Certification`;
-  const desc = `Online OSHA HAZWOPER training: 40 hour from ${money(249.99)}, 24 hour, 8 hour refresher, supervisor, first responder, Cal/OSHA, Spanish and RCRA. ${total} courses, instant certificates, 29 CFR 1910.120 compliant.`;
+  const title = HOME.title || `HAZWOPER Training Online | OSHA 40, 24 & 8 Hour HAZWOPER Certification`;
+  const desc = HOME.desc || `Online OSHA HAZWOPER training: 40 hour from ${money(249.99)}, 24 hour, 8 hour refresher, supervisor, first responder, Cal/OSHA, Spanish and RCRA. ${total} courses, instant certificates, 29 CFR 1910.120 compliant.`;
   const ld = jsonLd({
     '@context': 'https://schema.org',
     '@graph': [
@@ -299,30 +324,27 @@ function buildIndex() {
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <p class="eyebrow">OSHA 29 CFR 1910.120 &amp; 1926.65 Compliant</p>
-      <h1>HAZWOPER Training Online: 40 Hour, 24 Hour &amp; 8 Hour Refresher Certification</h1>
-      <p class="lead">Every HAZWOPER course in one place. Get OSHA HAZWOPER certified 100% online with self-paced training, instant printable certificates and wallet cards, and support from real safety professionals. English and Spanish.</p>
+      <p class="eyebrow">${HOME.eyebrow || 'OSHA 29 CFR 1910.120 &amp; 1926.65 Compliant'}</p>
+      <h1>${HOME.h1 || 'HAZWOPER Training Online: 40 Hour, 24 Hour &amp; 8 Hour Refresher Certification'}</h1>
+      <p class="lead">${HOME.lead || 'Every HAZWOPER course in one place. Get OSHA HAZWOPER certified 100% online with self-paced training, instant printable certificates and wallet cards, and support from real safety professionals. English and Spanish.'}</p>
       <div class="hero-ctas">
-        ${enrollBtn(f40, 'btn btn-lg')}
+        ${HOME.ctas ? links(HOME.ctas, '') : `${enrollBtn(f40, 'btn btn-lg')}
         <a class="btn btn-ghost btn-lg" href="#courses">Browse all ${total} courses</a>
-        <a class="btn btn-ghost btn-lg" href="quizzes/">Free practice tests</a>
+        <a class="btn btn-ghost btn-lg" href="quizzes/">Free practice tests</a>`}
       </div>
       <ul class="trust">
-        <li>Instant certificate &amp; wallet card</li>
-        <li>24/7 access on any device</li>
-        <li>Save progress, finish at your pace</li>
-        <li>One cart for your whole team</li>
+        ${(HOME.trust || ['Instant certificate &amp; wallet card', '24/7 access on any device', 'Save progress, finish at your pace', 'One cart for your whole team']).map(t => `<li>${t}</li>`).join('\n        ')}
       </ul>
     </div>
-    <div class="quick" aria-label="Most popular HAZWOPER courses">
-      <h2>Most popular</h2>
-      ${[f40, f24, f8, f4].map(c => `<a class="quick-row" href="courses/${c.slug}/"><span>${esc(c.name.replace(/^OSHA /, ''))}</span><strong>${money(c.price)}</strong></a>`).join('')}
-      <p class="quick-note">Not sure which level you need? <a href="#which">Use the guide below</a> or call <a href="${PHONE_HREF}">${PHONE}</a>.</p>
+    <div class="quick" aria-label="${esc(HOME.quickTitle || 'Most popular')} HAZWOPER courses">
+      <h2>${HOME.quickTitle || 'Most popular'}</h2>
+      ${(HOME.quick ? HOME.quick.map(x => COURSE_BY_SLUG[x]) : [f40, f24, f8, f4]).map(c => `<a class="quick-row" href="courses/${c.slug}/"><span>${esc(c.name.replace(/^OSHA /, ''))}</span><strong>${money(c.price)}</strong></a>`).join('')}
+      <p class="quick-note">${HOME.quickNote ? links(HOME.quickNote, '') : `Not sure which level you need? <a href="#which">Use the guide below</a> or call <a href="${PHONE_HREF}">${PHONE}</a>.`}</p>
     </div>
   </div>
 </section>
 
-<section class="wrap which" id="which" aria-labelledby="h-which">
+${HOME.middle ? links(HOME.middle, '') : `<section class="wrap which" id="which" aria-labelledby="h-which">
   <h2 id="h-which">Which HAZWOPER course do I need?</h2>
   <div class="table-wrap">
   <table>
@@ -339,12 +361,12 @@ function buildIndex() {
     </tbody>
   </table>
   </div>
-</section>
+</section>`}
 
 <section class="courses" id="courses" aria-labelledby="h-courses">
   <div class="wrap">
     <div class="courses-head">
-      <h2 id="h-courses">All HAZWOPER Training Courses</h2>
+      <h2 id="h-courses">${HOME.coursesTitle || 'All HAZWOPER Training Courses'}</h2>
       <label class="search"><span class="sr">Search courses</span><input id="q" type="search" placeholder="Search: 40 hour, refresher, RCRA, Cal/OSHA, 1910.120..." autocomplete="off"></label>
     </div>
     <nav class="jump" aria-label="Course categories">${GROUPS.map(g => `<a href="#${g.id}">${esc(g.title)}</a>`).join('')}</nav>
@@ -353,7 +375,7 @@ function buildIndex() {
   </div>
 </section>
 
-<section class="wrap about" aria-labelledby="h-about">
+${HOME.after ? links(HOME.after, '') : `<section class="wrap about" aria-labelledby="h-about">
   <h2 id="h-about">About OSHA HAZWOPER (29 CFR 1910.120)</h2>
   <div class="cols">
     <div>
@@ -383,19 +405,19 @@ function buildIndex() {
   <h2 class="mt">Free HAZWOPER practice quizzes</h2>
   <p class="group-blurb">Test yourself before the final exam. Every question has an answer and explanation.</p>
   <div class="grid">${QUIZZES.map(q => quizCard(q)).join('\n')}</div>
-</section>
+</section>`}
 
 <section class="faq" id="faq" aria-labelledby="h-faq">
   <div class="wrap">
-    <h2 id="h-faq">HAZWOPER Training FAQ</h2>
+    <h2 id="h-faq">${HOME.faqTitle || 'HAZWOPER Training FAQ'}</h2>
     ${FAQ.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('\n    ')}
   </div>
 </section>
 
 <section class="cta-band">
   <div class="wrap cta-row">
-    <h2>Start your HAZWOPER certification today</h2>
-    <div>${enrollBtn(f40, 'btn btn-lg btn-dark')} <a class="btn btn-ghost btn-lg" href="${PHONE_HREF}">Call ${PHONE}</a></div>
+    <h2>${HOME.ctaTitle || 'Start your HAZWOPER certification today'}</h2>
+    <div>${HOME.ctaButtons ? links(HOME.ctaButtons, '') : `${enrollBtn(f40, 'btn btn-lg btn-dark')} <a class="btn btn-ghost btn-lg" href="${PHONE_HREF}">Call ${PHONE}</a>`}</div>
   </div>
 </section>
 ` + foot(0);
@@ -434,30 +456,26 @@ function buildCourse(c) {
     ${enrollBtn(c, 'btn btn-lg btn-block', 2)}
     ${cartBtn(c, 'btn btn-ghost btn-lg btn-block mt-sm', 2)}
     <ul class="checks small">
-      <li>Start immediately after checkout</li>
-      <li>Progress saves automatically</li>
-      <li>Certificate the moment you pass</li>
+      ${(COURSE_COPY.buyChecks || ['Start immediately after checkout', 'Progress saves automatically', 'Certificate the moment you pass']).map(x => `<li>${x}</li>`).join('\n      ')}
     </ul>
     <p class="buy-note">Buying for a team? <a href="mailto:${EMAIL}?subject=${encodeURIComponent('Group quote: ' + c.name)}">Get group pricing</a></p>
   </aside>
 </section>
 <section class="wrap course-body">
-  <h2>Who should take this course</h2>
-  <p>${esc(c.audience || 'Workers and supervisors who need hazardous waste and emergency response training.')}</p>
-  <h2>How it works</h2>
+  <h2>${COURSE_COPY.whoTitle || 'Who should take this course'}</h2>
+  <p>${esc(c.audience || 'Workers and supervisors who need hazardous waste and emergency response training.')}</p>${COURSE_COPY.extra ? '\n  ' + links(COURSE_COPY.extra(c), '../../') : ''}
+  <h2>${COURSE_COPY.howTitle || 'How it works'}</h2>
   <ol>
-    <li>Enroll and pay securely online.</li>
-    <li>Log in and work through the lessons at your own pace on desktop, tablet or phone.</li>
-    <li>Pass the final exam and instantly download your certificate of completion and wallet card.</li>
+    ${(COURSE_COPY.howSteps || ['Enroll and pay securely online.', 'Log in and work through the lessons at your own pace on desktop, tablet or phone.', 'Pass the final exam and instantly download your certificate of completion and wallet card.']).map(x => `<li>${x}</li>`).join('\n    ')}
   </ol>
   ${c.altTags && c.altTags.length ? `<h2>Also known as</h2><p>${c.altTags.map(esc).join(' · ')}</p>` : ''}
   ${(() => {
     const gs = guidesFor(c.slug), qs = quizzesFor(c.slug);
     if (!gs.length && !qs.length) return '';
-    return `<h2>Study guides &amp; practice quizzes</h2>
+    return `<h2>${COURSE_COPY.resourcesTitle || 'Study guides &amp; practice quizzes'}</h2>
   <ul class="res-list">${gs.map(g => `<li><a href="../../guides/${g.slug}/">${esc(g.title)}</a></li>`).join('')}${qs.map(q => `<li><a href="../../quizzes/${q.slug}/">Free quiz: ${esc(q.title)}</a></li>`).join('')}</ul>`;
   })()}
-  <h2>Related HAZWOPER courses</h2>
+  <h2>${COURSE_COPY.relatedTitle || 'Related HAZWOPER courses'}</h2>
   <div class="grid">${related.concat(more).map(x => card(x, 2)).join('\n')}</div>
 </section>
 ` + foot(2);
@@ -472,10 +490,10 @@ const readMins = html => Math.max(2, Math.round(stripTags(html).split(' ').lengt
 function guideCard(g, depth = 0) {
   const rel = '../'.repeat(depth);
   return `<article class="card card-res">
-  <div class="card-top"><span class="pill pill-soft">Guide</span><span class="muted small">${readMins(g.body)} min read</span></div>
+  <div class="card-top"><span class="pill pill-soft">${esc(GUIDE_COPY.cardLabel || 'Guide')}</span><span class="muted small">${readMins(g.body)} min read</span></div>
   <h3><a href="${rel}guides/${g.slug}/">${esc(g.title)}</a></h3>
   <p class="cite">${esc(g.desc.slice(0, 140).replace(/\s\S*$/, ''))}...</p>
-  <div class="card-actions"><a class="link" href="${rel}guides/${g.slug}/">Read the guide</a></div>
+  <div class="card-actions"><a class="link" href="${rel}guides/${g.slug}/">${esc(GUIDE_COPY.readLink || 'Read the guide')}</a></div>
 </article>`;
 }
 function quizCard(q, depth = 0) {
@@ -501,15 +519,15 @@ function buildGuide(g) {
       datePublished: PUBLISHED, dateModified: TODAY, inLanguage: 'en', image: `${SITE_URL}/${SHARE_IMAGE}`,
       author: { '@id': `${SITE_URL}/#organization` }, publisher: { '@id': `${SITE_URL}/#organization` },
       about: ['HAZWOPER', 'OSHA 29 CFR 1910.120'], isPartOf: { '@id': `${SITE_URL}/#website` } },
-    crumbLd([['HAZWOPER Training', SITE_URL + '/'], ['Guides', `${SITE_URL}/guides/`], [g.title, url]])];
+    crumbLd([['HAZWOPER Training', SITE_URL + '/'], [GUIDE_COPY.label || 'Guides', `${SITE_URL}/guides/`], [g.title, url]])];
   if (g.faq.length) graph.push(faqLd(g.faq));
   if (g.slug === GLOSSARY_GUIDE.slug) graph.push({ '@type': 'DefinedTermSet', '@id': url + '#terms', name: 'HAZWOPER Glossary', url,
     hasDefinedTerm: GLOSSARY.map(([t, d]) => ({ '@type': 'DefinedTerm', name: t, description: d, url: `${url}#${slugify(t)}` })) });
   const html = head({ title: `${g.title} | ${BRAND}`, desc: g.desc, canonical: url, depth: 2, extra: jsonLd({ '@context': 'https://schema.org', '@graph': graph }) }) + `
-<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../../">HAZWOPER Training</a> › <a href="../">Guides</a> › <span>${esc(g.short)}</span></nav>
+<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../../">HAZWOPER Training</a> › <a href="../">${esc(GUIDE_COPY.label || 'Guides')}</a> › <span>${esc(g.short)}</span></nav>
 <div class="wrap guide-layout">
   <article class="guide">
-    <p class="eyebrow">HAZWOPER guide · ${readMins(g.body)} min read · Updated ${TODAY}</p>
+    <p class="eyebrow">${esc(GUIDE_COPY.eyebrow || 'HAZWOPER guide')} · ${readMins(g.body)} min read · Updated ${TODAY}</p>
     <h1>${esc(g.title)}</h1>
     ${toc.length > 2 ? `<nav class="toc" aria-label="On this page"><strong>On this page</strong><ol>${toc.map(([id, t]) => `<li><a href="#${id}">${esc(t)}</a></li>`).join('')}</ol></nav>` : ''}
     ${body}
@@ -518,14 +536,14 @@ function buildGuide(g) {
   </article>
   <aside class="guide-side">
     <div class="side-box">
-      <h2>Get trained</h2>
+      <h2>${GUIDE_COPY.sideCourses || 'Get trained'}</h2>
       ${courseList.map(c => `<div class="side-course"><a href="../../courses/${c.slug}/">${esc(c.name)}</a><div class="side-row"><span>${esc(c.duration)} · <strong>${money(c.price)}</strong></span>${cartBtn(c, 'btn btn-sm', 2)}</div></div>`).join('')}
     </div>
     ${quiz ? `<div class="side-box side-quiz"><h2>Test yourself</h2><p>${quiz.questions.length} free questions with answers.</p><a class="btn btn-block" href="../../quizzes/${quiz.slug}/">${esc(quiz.short)}</a></div>` : ''}
   </aside>
 </div>
 <section class="wrap course-body">
-  <h2>More HAZWOPER guides</h2>
+  <h2>${GUIDE_COPY.moreTitle || 'More HAZWOPER guides'}</h2>
   <div class="grid">${others.slice(0, 6).map(x => guideCard(x, 2)).join('\n')}</div>
 </section>
 ` + foot(2);
@@ -537,19 +555,19 @@ function buildGuide(g) {
 function buildGuidesHub() {
   const url = `${SITE_URL}/guides/`;
   const ld = jsonLd({ '@context': 'https://schema.org', '@graph': [orgLd,
-    { '@type': 'CollectionPage', '@id': url, url, name: 'HAZWOPER Guides', description: 'Free HAZWOPER guides', isPartOf: { '@id': `${SITE_URL}/#website` },
+    { '@type': 'CollectionPage', '@id': url, url, name: GUIDE_COPY.hubName || 'HAZWOPER Guides', description: GUIDE_COPY.hubName ? GUIDE_COPY.hubDesc : 'Free HAZWOPER guides', isPartOf: { '@id': `${SITE_URL}/#website` },
       mainEntity: { '@type': 'ItemList', itemListElement: ALL_GUIDES.map((g, i) => ({ '@type': 'ListItem', position: i + 1, url: guideUrl(g), name: g.title })) } },
-    crumbLd([['HAZWOPER Training', SITE_URL + '/'], ['Guides', url]])] });
-  const html = head({ title: `HAZWOPER Guides: Free OSHA 1910.120 Training Resources | ${BRAND}`,
-    desc: `Free HAZWOPER guides: what HAZWOPER is, 40 vs 24 vs 8 hour training, refresher rules, PPE levels, decon, air monitoring, medical surveillance, Cal/OSHA, RCRA and a ${GLOSSARY.length}-term glossary.`,
+    crumbLd([['HAZWOPER Training', SITE_URL + '/'], [GUIDE_COPY.label || 'Guides', url]])] });
+  const html = head({ title: GUIDE_COPY.hubTitle || `HAZWOPER Guides: Free OSHA 1910.120 Training Resources | ${BRAND}`,
+    desc: GUIDE_COPY.hubDesc || `Free HAZWOPER guides: what HAZWOPER is, 40 vs 24 vs 8 hour training, refresher rules, PPE levels, decon, air monitoring, medical surveillance, Cal/OSHA, RCRA and a ${GLOSSARY.length}-term glossary.`,
     canonical: url, depth: 1, extra: ld }) + `
-<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../">HAZWOPER Training</a> › <span>Guides</span></nav>
+<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../">HAZWOPER Training</a> › <span>${esc(GUIDE_COPY.label || 'Guides')}</span></nav>
 <section class="wrap course-body">
-  <h1>HAZWOPER Guides &amp; Resources</h1>
-  <p class="lead">Everything about OSHA HAZWOPER in one place: who needs training, how much, what the rules say about PPE, decontamination, air monitoring, medical surveillance and emergency response, plus RCRA hazardous waste and Cal/OSHA.</p>
+  <h1>${GUIDE_COPY.hubH1 || 'HAZWOPER Guides &amp; Resources'}</h1>
+  <p class="lead">${GUIDE_COPY.hubLead || 'Everything about OSHA HAZWOPER in one place: who needs training, how much, what the rules say about PPE, decontamination, air monitoring, medical surveillance and emergency response, plus RCRA hazardous waste and Cal/OSHA.'}</p>
   <div class="grid">${ALL_GUIDES.map(g => guideCard(g, 1)).join('\n')}</div>
-  <h2>Practice quizzes</h2>
-  <div class="grid">${QUIZZES.map(q => quizCard(q, 1)).join('\n')}</div>
+  ${QUIZZES.length ? `<h2>${QUIZ_COPY.hubSection || 'Practice quizzes'}</h2>
+  <div class="grid">${QUIZZES.map(q => quizCard(q, 1)).join('\n')}</div>` : ''}
 </section>
 ` + foot(1);
   fs.mkdirSync(path.join(ROOT, 'guides'), { recursive: true });
@@ -605,17 +623,17 @@ function buildQuiz(q) {
 function buildQuizHub() {
   const url = `${SITE_URL}/quizzes/`;
   const ld = jsonLd({ '@context': 'https://schema.org', '@graph': [orgLd,
-    { '@type': 'CollectionPage', '@id': url, url, name: 'Free HAZWOPER Practice Quizzes', isPartOf: { '@id': `${SITE_URL}/#website` },
+    { '@type': 'CollectionPage', '@id': url, url, name: QUIZ_COPY.hubName || 'Free HAZWOPER Practice Quizzes', isPartOf: { '@id': `${SITE_URL}/#website` },
       mainEntity: { '@type': 'ItemList', itemListElement: QUIZZES.map((q, i) => ({ '@type': 'ListItem', position: i + 1, url: quizUrl(q), name: q.title })) } },
     crumbLd([['HAZWOPER Training', SITE_URL + '/'], ['Quizzes', url]])] });
   const total = QUIZZES.reduce((n, q) => n + q.questions.length, 0);
-  const html = head({ title: `Free HAZWOPER Practice Tests & Quizzes With Answers | ${BRAND}`,
-    desc: `${total} free HAZWOPER practice test questions with answers and explanations: 40 hour, 8 hour refresher, PPE levels, air monitoring, decon, first responder awareness and RCRA.`,
+  const html = head({ title: QUIZ_COPY.hubTitle || `Free HAZWOPER Practice Tests & Quizzes With Answers | ${BRAND}`,
+    desc: (QUIZ_COPY.hubDesc || `${total} free HAZWOPER practice test questions with answers and explanations: 40 hour, 8 hour refresher, PPE levels, air monitoring, decon, first responder awareness and RCRA.`).replace('{total}', total),
     canonical: url, depth: 1, extra: ld }) + `
 <nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../">HAZWOPER Training</a> › <span>Quizzes</span></nav>
 <section class="wrap course-body">
-  <h1>Free HAZWOPER Practice Tests &amp; Quizzes</h1>
-  <p class="lead">${total} practice questions with instant scoring and an explanation for every answer. No sign-up needed.</p>
+  <h1>${QUIZ_COPY.hubH1 || 'Free HAZWOPER Practice Tests &amp; Quizzes'}</h1>
+  <p class="lead">${(QUIZ_COPY.hubLead || '{total} practice questions with instant scoring and an explanation for every answer. No sign-up needed.').replace('{total}', total)}</p>
   <div class="grid">${QUIZZES.map(q => quizCard(q, 1)).join('\n')}</div>
   <h2>Study guides</h2>
   <div class="grid">${ALL_GUIDES.slice(0, 6).map(g => guideCard(g, 1)).join('\n')}</div>
@@ -623,6 +641,25 @@ function buildQuizHub() {
 ` + foot(1);
   fs.mkdirSync(path.join(ROOT, 'quizzes'), { recursive: true });
   fs.writeFileSync(path.join(ROOT, 'quizzes/index.html'), html);
+}
+
+// ---------- standalone pages (data/copy.js pages) ----------
+// Each page: { slug, title, short, desc, h1, body (HTML with link tokens), scripts: [...], faq: [[q, a]] }
+function buildPage(pg) {
+  const url = `${SITE_URL}/${pg.slug}/`;
+  const graph = [orgLd, { '@type': 'WebPage', '@id': url, url, name: pg.title, description: pg.desc, isPartOf: { '@id': `${SITE_URL}/#website` } },
+    crumbLd([['HAZWOPER Training', SITE_URL + '/'], [pg.short, url]])];
+  if (pg.faq && pg.faq.length) graph.push(faqLd(pg.faq));
+  const html = head({ title: `${pg.title} | ${BRAND}`, desc: pg.desc, canonical: url, depth: 1, extra: jsonLd({ '@context': 'https://schema.org', '@graph': graph }) }) + `
+<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="../">HAZWOPER Training</a> › <span>${esc(pg.short)}</span></nav>
+<section class="wrap course-body tool-page">
+  <h1>${pg.h1 || esc(pg.title)}</h1>
+  ${links(pg.body, '../')}
+  ${pg.faq && pg.faq.length ? `<h2 id="faq">Frequently asked questions</h2>\n  ${pg.faq.map(([q, a]) => `<details><summary>${esc(q)}</summary><p>${esc(a)}</p></details>`).join('\n  ')}` : ''}
+</section>
+` + foot(1, ['config.js', 'cart.js'].concat(pg.scripts || []));
+  fs.mkdirSync(path.join(ROOT, pg.slug), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, pg.slug, 'index.html'), html);
 }
 
 // ---------- sitewide search ----------
@@ -635,6 +672,7 @@ function buildSearch() {
     x: withToc(g.body).toc.map(t => t[1]).join(' ') + ' ' + g.faq.map(f => f[0]).join(' ') }));
   GLOSSARY.forEach(([t, d]) => idx.push({ k: 'Glossary', t, u: `guides/${GLOSSARY_GUIDE.slug}/#${slugify(t)}`, d }));
   QUIZZES.forEach(q => idx.push({ k: 'Quiz', t: q.title, u: `quizzes/${q.slug}/`, d: q.desc, x: q.questions.map(x => x.q).join(' ') }));
+  PAGES.forEach(pg => idx.push({ k: 'Tool', t: pg.title, u: `${pg.slug}/`, d: pg.desc }));
   ALL_GUIDES.forEach(g => g.faq.forEach(([q, a]) => idx.push({ k: 'FAQ', t: q, u: `guides/${g.slug}/#faq`, d: a })));
   FAQ.forEach(([q, a]) => idx.push({ k: 'FAQ', t: q, u: '#faq', d: a }));
   fs.writeFileSync(path.join(ROOT, 'assets/search-index.js'), `// Generated by tools/build.js - sitewide search index.\nvar HZ_SEARCH = ${JSON.stringify(idx)};\n`);
@@ -645,14 +683,14 @@ function buildSearch() {
   <h1>Search HAZWOPER courses, guides &amp; quizzes</h1>
   <form class="search-big" action="./" method="get" role="search">
     <label class="sr" for="sq">Search</label>
-    <input id="sq" name="q" type="search" placeholder="Try: 40 hour, refresher, PPE level B, IDLH, Cal/OSHA, RCRA..." autocomplete="off">
+    <input id="sq" name="q" type="search" placeholder="${esc(COPY.searchExamples || 'Try: 40 hour, refresher, PPE level B, IDLH, Cal/OSHA, RCRA...')}" autocomplete="off">
     <button type="submit" class="btn btn-lg">Search</button>
   </form>
   <p id="searchStatus" class="muted" aria-live="polite"></p>
   <ol id="searchResults" class="results"></ol>
   <div id="searchEmpty" hidden>
     <p>Nothing matched. Try fewer words, or browse:</p>
-    <ul class="res-list"><li><a href="../#courses">All courses</a></li><li><a href="../guides/">All guides</a></li><li><a href="../quizzes/">All quizzes</a></li><li><a href="../guides/${GLOSSARY_GUIDE.slug}/">Glossary</a></li></ul>
+    <ul class="res-list"><li><a href="../#courses">All courses</a></li><li><a href="../guides/">${esc(GUIDE_COPY.allLink || 'All guides')}</a></li>${QUIZZES.length ? '<li><a href="../quizzes/">All quizzes</a></li>' : ''}${GLOSSARY.length ? `<li><a href="../guides/${GLOSSARY_GUIDE.slug}/">Glossary</a></li>` : ''}${PAGES.map(pg => `<li><a href="../${pg.slug}/">${esc(pg.short)}</a></li>`).join('')}</ul>
     <p>Or call <a href="${PHONE_HREF}">${PHONE}</a> and we'll point you to the right training.</p>
   </div>
 </section>
@@ -665,7 +703,8 @@ function buildSearch() {
 function buildExtras() {
   const urls = [{ loc: SITE_URL + '/', pri: '1.0' }].concat(courses.map(c => ({ loc: c.url, pri: c.group === 'core' ? '0.9' : '0.8' })),
     [{ loc: `${SITE_URL}/guides/`, pri: '0.9' }], ALL_GUIDES.map(g => ({ loc: guideUrl(g), pri: '0.8' })),
-    [{ loc: `${SITE_URL}/quizzes/`, pri: '0.8' }], QUIZZES.map(q => ({ loc: quizUrl(q), pri: '0.7' })));
+    QUIZZES.length ? [{ loc: `${SITE_URL}/quizzes/`, pri: '0.8' }] : [], QUIZZES.map(q => ({ loc: quizUrl(q), pri: '0.7' })),
+    PAGES.map(pg => ({ loc: `${SITE_URL}/${pg.slug}/`, pri: '0.8' })));
   fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url><loc>${u.loc}</loc><lastmod>${TODAY}</lastmod><priority>${u.pri}</priority></url>`).join('\n')}
@@ -698,7 +737,7 @@ Sitemap: ${SITE_URL}/sitemap.xml
 `);
   fs.writeFileSync(path.join(ROOT, 'llms.txt'), `# ${BRAND} - HAZWOPER Courses
 
-> ${BRAND} offers the complete catalog of OSHA HAZWOPER (29 CFR 1910.120 / 1926.65) training online: 40 hour, 24 hour, 8 hour annual refresher, supervisor, incident command, first responder awareness, industry-specific 40 hour, Cal/OSHA (8 CCR 5192), Spanish, RCRA hazardous waste and TSDF courses. All courses are self-paced and online with instant certificates and wallet cards. Contact: ${EMAIL}, ${PHONE}.
+> ${COPY.llmsSummary || `${BRAND} offers the complete catalog of OSHA HAZWOPER (29 CFR 1910.120 / 1926.65) training online: 40 hour, 24 hour, 8 hour annual refresher, supervisor, incident command, first responder awareness, industry-specific 40 hour, Cal/OSHA (8 CCR 5192), Spanish, RCRA hazardous waste and TSDF courses. All courses are self-paced and online with instant certificates and wallet cards.`} Contact: ${EMAIL}, ${PHONE}.
 
 ## Key facts
 
@@ -706,20 +745,20 @@ Sitemap: ${SITE_URL}/sitemap.xml
 - Format: 100% online, self-paced, any device, progress saved automatically
 - Certificate: certificate of completion and wallet card available immediately after passing
 - Languages: English; OSHA 40-Hour HAZWOPER also in Spanish
-- Employers: bulk seats with volume discounts and certificate tracking
+- Employers: one cart and one checkout for every course and seat a team needs
 
 ## Courses
 
 ${GROUPS.map(g => `### ${g.title}\n\n${courses.filter(c => c.group === g.id).map(c => `- [${c.name}](${c.url}): ${c.duration}, ${money(c.price)}. Meets ${c.citation}.`).join('\n')}`).join('\n\n')}
 
-## Guides
+## ${GUIDE_COPY.label || 'Guides'}
 
 ${ALL_GUIDES.map(g => `- [${g.title}](${guideUrl(g)}): ${g.desc}`).join('\n')}
-
+${PAGES.length ? `\n## Tools\n\n${PAGES.map(pg => `- [${pg.title}](${SITE_URL}/${pg.slug}/): ${pg.desc}`).join('\n')}\n` : ''}${QUIZZES.length ? `
 ## Free practice quizzes
 
 ${QUIZZES.map(q => `- [${q.title}](${quizUrl(q)}): ${q.questions.length} questions with answers.`).join('\n')}
-
+` : ''}
 ## FAQ
 
 ${FAQ.map(([q, a]) => `- **${q}** ${a}`).join('\n')}
@@ -742,12 +781,12 @@ The full text of every guide, the glossary and all quiz questions with answers i
 
 ${ALL_GUIDES.map(g => `## ${g.title}\n\nURL: ${guideUrl(g)}\n\n${toText(g.body)}${g.faq.length ? '\n\n### FAQ\n\n' + g.faq.map(([q, a]) => `- **${q}** ${a}`).join('\n') : ''}\n\nRelated courses: ${g.related.map(s => `${COURSE_BY_SLUG[s].name} (${COURSE_BY_SLUG[s].url})`).join('; ')}`).join('\n\n---\n\n')}
 
----
+${QUIZZES.length ? `---
 
 ## Practice quiz questions and answers
 
 ${QUIZZES.map(q => `### ${q.title}\n\nURL: ${quizUrl(q)}\n\n${q.questions.map((x, i) => `${i + 1}. ${x.q}\n   Answer: ${x.o[x.a]}. ${x.e}`).join('\n')}`).join('\n\n')}
-`);
+` : ''}`);
   // 404 is served at any path, so every relative link becomes absolute.
   const absolute = html => html.replace(/(href|src|action)="(?!https?:|mailto:|tel:)(?:\.\/)?([^"]*)"/g, `$1="${SITE_URL}/$2"`);
   fs.writeFileSync(path.join(ROOT, '404.html'), absolute(head({ title: `Page not found | ${BRAND}`, desc: 'Page not found.', canonical: SITE_URL + '/' })
@@ -867,14 +906,15 @@ function formatMoney(n) { return Number(n).toLocaleString('en-US', { minimumFrac
   fs.writeFileSync(path.join(ROOT, 'checkout.html'), html);
 }
 
-['courses', 'guides', 'quizzes', 'search'].forEach(d => fs.rmSync(path.join(ROOT, d), { recursive: true, force: true }));
+['courses', 'guides', 'quizzes', 'search'].concat(PAGES.map(pg => pg.slug)).forEach(d => fs.rmSync(path.join(ROOT, d), { recursive: true, force: true }));
 buildIndex();
 courses.forEach(buildCourse);
 ALL_GUIDES.forEach(buildGuide);
 buildGuidesHub();
 QUIZZES.forEach(buildQuiz);
-buildQuizHub();
+if (QUIZZES.length) buildQuizHub();
+PAGES.forEach(buildPage);
 buildSearch();
 buildExtras();
 buildCheckout();
-console.log(`Built index + ${courses.length} course, ${ALL_GUIDES.length} guide and ${QUIZZES.length} quiz pages for ${SITE_URL}`);
+console.log(`Built index + ${courses.length} course, ${ALL_GUIDES.length} guide, ${QUIZZES.length} quiz and ${PAGES.length} tool pages for ${SITE_URL}`);

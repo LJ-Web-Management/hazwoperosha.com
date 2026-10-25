@@ -13,6 +13,7 @@ data/source.json     course data (from the HAZWOPER OSHA master course catalog)
 data/guides.js       guide articles (HTML body, FAQ, related courses) -> guides/<slug>/
 data/glossary.js     glossary terms -> guides/hazwoper-glossary/
 data/quizzes.js      practice quizzes (questions, answers, explanations) -> quizzes/<slug>/
+data/copy.js         optional per-site wording (home, FAQ, course copy, tool pages); absent here, so build.js defaults apply
 tools/build.js       generator - run `node tools/build.js` after editing data or copy
 index.html           generated hub page (course list, which-course guide, FAQ)
 courses/<slug>/      generated per-course pages
