@@ -22,6 +22,8 @@ const PHONE = '+1-866-429-6742';
 const PHONE_HREF = 'tel:+18664296742';
 const EMAIL = 'sales@hazwoper-osha.com';
 const TODAY = new Date().toISOString().slice(0, 10);
+// Changes whenever the favicon file changes, so browsers drop their cached tab icon.
+const FAVICON_VERSION = require('crypto').createHash('md5').update(fs.readFileSync(path.join(ROOT, 'assets/favicon.png'))).digest('hex').slice(0, 8);
 const YEAR = new Date().getFullYear();
 
 const src = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/source.json'), 'utf8'));
@@ -137,7 +139,7 @@ function head({ title, desc, canonical, extra = '', depth = 0 }) {
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
 <meta name="theme-color" content="${THEME_COLOR}">
-<link rel="icon" type="image/png" href="${rel}assets/favicon.png">
+<link rel="icon" type="image/png" href="${rel}assets/favicon.png?v=${FAVICON_VERSION}">
 ${HEAD_EXTRA}<link rel="stylesheet" href="${rel}assets/style.css">
 ${extra}
 </head>
