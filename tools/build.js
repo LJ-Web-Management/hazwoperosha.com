@@ -14,6 +14,7 @@ const LEGAL_NAME = SITE.legalName || 'HAZWOPER OSHA Training LLC';
 const THEME_COLOR = SITE.themeColor || '#ffcd08';
 const SHARE_IMAGE = SITE.shareImage || 'assets/hazwoper-logo.png';
 const HEAD_EXTRA = SITE.headExtra || '';
+const GA_ID = SITE.gaId || '';
 const SAME_AS = SITE.sameAs || [MAIN_SITE, 'https://hazwoperosha.org/'];
 const logoHtml = (rel, where) => SITE.logo ? SITE.logo(rel, where) : where === 'footer'
   ? `<img src="${rel}assets/hazwoper-logo.png" alt="${BRAND}" width="160" height="43" loading="lazy">`
@@ -123,7 +124,16 @@ function head({ title, desc, canonical, extra = '', depth = 0 }) {
   return `<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+${GA_ID ? `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '${GA_ID}');
+</script>
+` : ''}<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
