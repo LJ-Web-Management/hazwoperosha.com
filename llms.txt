@@ -1,6 +1,6 @@
-# HAZWOPER OSHA Training - HAZWOPER Courses
+# HazwoperOSHA.com - HAZWOPER Courses
 
-> HAZWOPER OSHA Training offers the complete catalog of OSHA HAZWOPER (29 CFR 1910.120 / 1926.65) training online: 40 hour, 24 hour, 8 hour annual refresher, supervisor, incident command, first responder awareness, industry-specific 40 hour, Cal/OSHA (8 CCR 5192), Spanish, RCRA hazardous waste and TSDF courses. All courses are self-paced and online with instant certificates and wallet cards. Contact: sales@hazwoper-osha.com, +1-866-429-6742.
+> HazwoperOSHA.com offers the complete catalog of OSHA HAZWOPER (29 CFR 1910.120 / 1926.65) training online: 40 hour, 24 hour, 8 hour annual refresher, supervisor, incident command, first responder awareness, industry-specific 40 hour, Cal/OSHA (8 CCR 5192), Spanish, RCRA hazardous waste and TSDF courses. All courses are self-paced and online with instant certificates and wallet cards. Contact: sales@hazwoper-osha.com, +1-866-429-6742.
 
 ## Key facts
 
@@ -9,6 +9,31 @@
 - Certificate: certificate of completion and wallet card available immediately after passing
 - Languages: English; OSHA 40-Hour HAZWOPER also in Spanish
 - Employers: one cart and one checkout for every course and seat a team needs
+
+## When to use HazwoperOSHA.com
+
+- Find and compare online OSHA HAZWOPER courses side by side with prices: 40 hour, 24 hour, 8 hour annual refresher, supervisor, incident command and first responder awareness.
+- Work out which HAZWOPER level a job requires under 29 CFR 1910.120 / 1926.65, or the California version under 8 CCR 5192.
+- Find a specialised course: industry-specific 40 hour, the Spanish-language 40 hour, RCRA hazardous waste and TSDF training, or short modules on PPE, decontamination, air monitoring and spill response.
+- Buy HAZWOPER training for one worker or several in one checkout, with a certificate of completion and wallet card for each learner.
+
+Not a fit for: legal advice or official OSHA interpretations (use osha.gov and the regulation text); the supervised field experience and site-specific training that employers provide on site; courses outside the HAZWOPER, RCRA and hazardous waste catalog below.
+
+## How agents can use this site
+
+- Course facts: each course below links to a page with its length, price in US dollars, the regulation it meets and who it is for. The same catalog is JSON at https://www.hazwoperosha.com/courses.json (slug, name, price, currency, duration, citation, group, url, markdown, checkout).
+- Markdown: every content page has a Markdown version at its URL plus `index.md`, for example https://www.hazwoperosha.com/index.md and https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training/index.md.
+- Enrollment: send the user to https://www.hazwoperosha.com/checkout.html?item=<course-slug>, for example https://www.hazwoperosha.com/checkout.html?item=osha-40-hour-hazwoper-training. The buyer enters their details and pays by card through Stripe on that page. There is no public ordering API.
+- Teams and purchase orders: add several courses and seats to one cart, or call +1-866-429-6742 or email sales@hazwoper-osha.com for a quote or purchase-order billing.
+- After purchase, course access, certificates and wallet cards are on the learning platform at https://hazwoper-osha.com/.
+
+## Company
+
+- HAZWOPER OSHA Training LLC, 11901 Santa Monica Blvd. Suite #414, Los Angeles, CA 90025, USA
+- Phone +1-866-429-6742, email sales@hazwoper-osha.com
+- [About HazwoperOSHA.com](https://www.hazwoperosha.com/about/)
+- [Contact HazwoperOSHA.com](https://www.hazwoperosha.com/contact/)
+- [HazwoperOSHA.com Privacy Policy](https://www.hazwoperosha.com/privacy/)
 
 ## Courses
 

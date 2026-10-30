@@ -19,7 +19,11 @@ index.html           generated hub page (course list, which-course guide, FAQ)
 courses/<slug>/      generated per-course pages
 guides/, quizzes/    generated guide and quiz pages + hub pages
 search/              generated sitewide search page (noindex); index in assets/search-index.js
-sitemap.xml, robots.txt, llms.txt, llms-full.txt, 404.html   generated SEO / AI-crawler files
+sitemap.xml, robots.txt, llms.txt, llms-full.txt, 404.html, 404.md, courses.json   generated SEO / AI-crawler files
+about/, contact/, privacy/   generated trust pages
+**/index.md          generated Markdown version of each page
+edge/                Cloudflare Worker for Markdown content negotiation (see AI agents)
+tests/               build checks: node --test tests/*.test.js
 checkout.html        generated checkout page (noindex)
 assets/config.js     generated checkout config (Stripe key, API base, items + LMS ids)
 assets/checkout.js   checkout flow (Stripe + LMS add_new_user/add_order, or email request)
@@ -53,7 +57,7 @@ run `node tools/build.js`.
 ## SEO
 
 Each page ships server-rendered content, a unique title/description, canonical URL,
-Open Graph tags and JSON-LD (`EducationalOrganization`, `Course` with `Offer`,
+Open Graph tags and JSON-LD (`Organization`/`EducationalOrganization`, `Course` with `Offer`,
 `ItemList`, `FAQPage`, `BreadcrumbList`, `Article` on guides, `Quiz` on quizzes,
 `DefinedTermSet` on the glossary). Guides, quizzes and courses cross-link to each other, and
 `llms-full.txt` carries the full text of every guide and quiz answer for answer engines.
@@ -61,3 +65,38 @@ Link tokens in guide bodies (`{{course:slug}}`, `{{guide:slug|text}}`, `{{quiz:s
 checked at build time, so a typo fails the build instead of shipping a broken link. `robots.txt` explicitly allows AI crawlers and
 `llms.txt` gives answer engines a plain-text summary of the catalog. Set `SITE_URL` when
 building if the site moves to a custom domain: `SITE_URL=https://example.com node tools/build.js`.
+
+## AI agents
+
+`tools/build.js` also writes what AI agents and the Is Agentic (is-agentic.com) checks look for:
+
+- `about/`, `contact/`, `privacy/`: trust pages linked from every footer. Company address and the
+  pages' "last updated" date (`ADDRESS`, `TRUST_UPDATED`) are at the top of `tools/build.js`;
+  `about` (opening paragraph) can be set per site in `data/copy.js`. The privacy page lists the
+  analytics found in `site.config.js`, so update it if tracking changes.
+- An `Organization` JSON-LD block (address, contactPoint) first on every page; the `@graph`
+  refers to it by `@id`.
+- `index.md` next to every content page, converted from the page's `<main>` and linked with
+  `<link rel="alternate" type="text/markdown">`; `404.md`; `courses.json` (catalog with
+  page, Markdown and checkout links).
+- `llms.txt` sections "When to use" (`whenToUse` in `data/copy.js`) and "How agents can use
+  this site".
+
+`node --test tests/*.test.js` checks all of this after a build, and the deploy workflow runs it
+before publishing.
+
+### Markdown content negotiation (`edge/`)
+
+GitHub Pages can't vary a response on the `Accept` header, so `Accept: text/markdown` requests
+for `/` and Markdown 404 bodies need a layer in front of it. `edge/worker.mjs` is a Cloudflare
+Worker that does this the way https://acceptmarkdown.com describes: q-value parsing,
+`Content-Type: text/markdown; charset=utf-8`, `Vary: Accept`, 406 for unsupported types, a
+`404.md` body for unknown paths, and a `Link` header from each HTML page to its Markdown version.
+To switch it on:
+
+1. Put the domain's DNS on Cloudflare, with `www` as a proxied CNAME to
+   `lj-web-management.github.io` and SSL/TLS mode "Full".
+2. `cd edge && npx wrangler login && npx wrangler deploy` (route and zone are in `edge/wrangler.toml`).
+3. Check: `curl -sS -i -H 'Accept: text/markdown' https://www.hazwoperosha.com/` returns Markdown with
+   `Vary: Accept`, `curl -sS -i -H 'Accept: text/html' https://www.hazwoperosha.com/` returns HTML, and
+   `curl -sS -i -H 'Accept: text/markdown' https://www.hazwoperosha.com/no-such-page` returns 404 with Markdown.
