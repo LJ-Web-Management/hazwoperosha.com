@@ -1,6 +1,6 @@
 # Site-Specific Safety and Health Plan (HASP) Requirements Under 1910.120(b)
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 Every hazardous waste cleanup site needs a written **site-specific safety and health plan**, often called a HASP. It is part of the employer's safety and health program under 29 CFR 1910.120(b), must be kept on site, and must address the safety and health hazards of each phase of the operation.
 

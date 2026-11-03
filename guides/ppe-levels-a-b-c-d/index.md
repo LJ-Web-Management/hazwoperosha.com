@@ -1,6 +1,6 @@
 # PPE Levels A, B, C and D Explained (EPA and OSHA HAZWOPER)
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 HAZWOPER sorts chemical protective ensembles into four levels, A through D, described in OSHA 29 CFR 1910.120 Appendix B and in EPA guidance. The level is chosen from the known or suspected hazard, the routes of exposure and how much is known about the chemicals involved.
 

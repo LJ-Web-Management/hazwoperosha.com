@@ -1,6 +1,6 @@
 # HAZWOPER 8 Hour Refresher Requirements: Deadlines, Lapses and Records
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 Workers trained at the 40 or 24 hour HAZWOPER level must complete **at least 8 hours of refresher training every year**. The rule is 29 CFR 1910.120(e)(8) for cleanup sites and (p)(7)(ii) for TSD facilities. Emergency responders under paragraph (q)(8) need annual refresher training of enough content and length to keep their competencies, or must show their competency each year.
 

@@ -6,6 +6,8 @@
 //   - Every negotiated response carries Vary: Accept; HTML responses advertise their Markdown version
 //     in a Link header.
 //   - An Accept header that rules out both HTML and Markdown gets 406 Not Acceptable.
+//   - The bare domain (hazwoperosha.com) gets a 301 to the canonical host (CANONICAL_HOST in wrangler.toml)
+//     without reaching GitHub Pages, so https://hazwoperosha.com/ works on Cloudflare's certificate.
 // Static files (CSS, JS, images, txt, xml, json, md) pass straight through. Deploy: see README.md.
 
 const PRODUCES = ['text/html', 'text/markdown'];
@@ -92,10 +94,21 @@ async function markdownNotFound(url, method, origin) {
   });
 }
 
+// A 301 from the bare domain to the canonical www host with the same path and query, or null for any other host.
+export function apexRedirect(url, canonicalHost) {
+  if (!canonicalHost || !canonicalHost.startsWith('www.') || url.hostname !== canonicalHost.slice(4)) return null;
+  return new Response(null, {
+    status: 301,
+    headers: { 'Location': `https://${canonicalHost}${url.pathname}${url.search}`, 'Cache-Control': 'public, max-age=3600' },
+  });
+}
+
 // origin(request) fetches from GitHub Pages: in production that is the global fetch, because a Worker's
-// subrequests to its own hostname go to the origin server.
-export async function handle(request, origin) {
+// subrequests to its own hostname go to the origin server. env holds the [vars] from wrangler.toml.
+export async function handle(request, origin, env = {}) {
   const url = new URL(request.url);
+  const redirect = apexRedirect(url, env.CANONICAL_HOST);
+  if (redirect) return redirect;
   if ((request.method !== 'GET' && request.method !== 'HEAD') || STATIC_EXT.test(url.pathname)) return origin(request);
 
   const accept = request.headers.get('accept');
@@ -123,7 +136,7 @@ export async function handle(request, origin) {
 }
 
 export default {
-  fetch(request) {
-    return handle(request, req => fetch(req));
+  fetch(request, env) {
+    return handle(request, req => fetch(req), env);
   },
 };

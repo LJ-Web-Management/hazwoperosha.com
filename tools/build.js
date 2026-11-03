@@ -58,6 +58,11 @@ const jsonLd = obj => `<script type="application/ld+json">${JSON.stringify(obj).
 const COPY = fs.existsSync(path.join(ROOT, 'data/copy.js'))
   ? require('../data/copy.js')({ BRAND, PHONE, PHONE_HREF, EMAIL, money }) : {};
 const HOME = COPY.home || {};
+// Main product terms, most important first. They go in the homepage <meta name="keywords"> and the Organization
+// JSON-LD (keywords, knowsAbout), where agents read what to pair with the brand name when they search for it.
+// Each one must also appear in the homepage text (tests/site.test.js checks), and the first in its title and H1.
+const KEYWORDS = COPY.keywords || ['HAZWOPER training', 'OSHA HAZWOPER certification', '40 hour HAZWOPER', '24 hour HAZWOPER',
+  '8 hour HAZWOPER refresher', 'HAZWOPER supervisor training', 'Cal/OSHA HAZWOPER', 'RCRA hazardous waste training'];
 const COURSE_COPY = COPY.course || {};
 const GUIDE_COPY = COPY.guides || {};
 const QUIZ_COPY = COPY.quizzes || {};
@@ -125,7 +130,7 @@ const FAQ = COPY.faq || [
 ];
 
 // ---------- layout ----------
-function head({ title, desc, canonical, extra = '', depth = 0 }) {
+function head({ title, desc, canonical, extra = '', depth = 0, keywords = null }) {
   const rel = depth ? '../'.repeat(depth) : '';
   return `<!doctype html>
 <html lang="en">
@@ -143,7 +148,7 @@ ${GA_ID ? `<!-- Google tag (gtag.js) -->
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
-<link rel="canonical" href="${canonical}">
+${keywords ? `<meta name="keywords" content="${esc(keywords.join(', '))}">\n` : ''}<link rel="canonical" href="${canonical}">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="${BRAND}">
@@ -381,6 +386,7 @@ const orgLd = {
   '@type': 'Organization', '@id': `${SITE_URL}/#organization`, name: BRAND, legalName: LEGAL_NAME, url: SITE_URL + '/',
   description: COPY.footerBlurb || 'Online OSHA HAZWOPER, RCRA and hazardous materials training for workers, supervisors and employers across the United States.',
   sameAs: SAME_AS, logo: `${SITE_URL}/${SHARE_IMAGE}`,
+  keywords: KEYWORDS.join(', '), knowsAbout: KEYWORDS,
   email: EMAIL, telephone: PHONE, areaServed: 'US',
   address: { '@type': 'PostalAddress', ...ADDRESS },
   contactPoint: { '@type': 'ContactPoint', telephone: PHONE, email: EMAIL, contactType: 'sales', areaServed: 'US', availableLanguage: ['English', 'Spanish'] },
@@ -425,7 +431,7 @@ function buildIndex() {
 </section>`;
   }).join('\n');
 
-  const html = head({ title, desc, canonical: SITE_URL + '/', extra: ld }) + `
+  const html = head({ title, desc, canonical: SITE_URL + '/', extra: ld, keywords: KEYWORDS }) + `
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
@@ -1091,7 +1097,7 @@ ${QUIZZES.map(q => `### ${q.title}\n\nURL: ${quizUrl(q)}\n\n${q.questions.map((x
   const absolute = html => html.replace(/(href|src|action)="(?!https?:|mailto:|tel:)(?:\.\/)?([^"]*)"/g, `$1="${SITE_URL}/$2"`);
   fs.writeFileSync(path.join(ROOT, '404.html'), absolute(head({ title: `Page not found | ${BRAND}`, desc: 'Page not found.', canonical: SITE_URL + '/' })
     .replace('content="index, follow', 'content="noindex, follow') + `
-<section class="wrap course-body"><h1>Page not found</h1><p>Try the search box above, or <a href="./">browse all HAZWOPER training courses</a>, <a href="guides/">${GUIDES_NAME}</a>${QUIZZES.length ? ' and <a href="quizzes/">quizzes</a>' : ''}.</p></section>
+<section class="wrap course-body"><h1>Page not found</h1><p>Try the search box above, or <a href="./">browse all HAZWOPER training courses</a>, <a href="guides/">${GUIDES_NAME}</a>${QUIZZES.length ? ' and <a href="quizzes/">quizzes</a>' : ''}.</p><p>The <a href="sitemap.xml">sitemap</a> lists every page on ${BRAND}, and <a href="llms.txt">llms.txt</a> gives AI assistants an overview of the site.</p></section>
 ` + foot(0)));
   // Markdown body for 404s requested with Accept: text/markdown (served by edge/worker.mjs).
   fs.writeFileSync(path.join(ROOT, '404.md'), `# Page not found (404)

@@ -22,8 +22,9 @@ search/              generated sitewide search page (noindex); index in assets/s
 sitemap.xml, robots.txt, llms.txt, llms-full.txt, 404.html, 404.md, courses.json   generated SEO / AI-crawler files
 about/, contact/, privacy/   generated trust pages
 **/index.md          generated Markdown version of each page
-edge/                Cloudflare Worker for Markdown content negotiation (see AI agents)
+edge/                Cloudflare Worker for Markdown content negotiation and the bare domain (see AI agents)
 tests/               build checks: node --test tests/*.test.js
+tools/check-live.js  checks the live site the way AI agents reach it (see AI agents)
 checkout.html        generated checkout page (noindex)
 assets/config.js     generated checkout config (Stripe key, API base, items + LMS ids)
 assets/checkout.js   checkout flow (Stripe + LMS add_new_user/add_order, or email request)
@@ -81,9 +82,40 @@ building if the site moves to a custom domain: `SITE_URL=https://example.com nod
   page, Markdown and checkout links).
 - `llms.txt` sections "When to use" (`whenToUse` in `data/copy.js`) and "How agents can use
   this site".
+- The main product terms (`KEYWORDS` near the top of `tools/build.js`, or `keywords` in
+  `data/copy.js`) in the homepage `<meta name="keywords">` and the Organization's `keywords` and
+  `knowsAbout`. Agents pair them with the brand name to check that a search finds this site, so
+  list the most important term first and keep every term worded as it is on the homepage (the
+  tests check that each one appears there, and the first in the title and H1).
+- The HTML 404 page links to `sitemap.xml` and `llms.txt` (GitHub Pages serves it with a real 404
+  status); `404.md` is the Markdown body the edge Worker sends instead.
 
 `node --test tests/*.test.js` checks all of this after a build, and the deploy workflow runs it
 before publishing.
+
+To check the live site the way an agent reaches it, run `node tools/check-live.js` (it checks the
+bare domain, https://hazwoperosha.com) or `node tools/check-live.js https://www.hazwoperosha.com`.
+It reports HTTPS and redirects, agent User-Agents, content, metadata, JSON-LD, Markdown
+negotiation, 404s, llms.txt, sitemap, robots.txt and the trust pages, and exits 1 unless all pass.
+Behind an HTTPS proxy, prefix it with `NODE_USE_ENV_PROXY=1`.
+
+### Bare domain (https://hazwoperosha.com)
+
+The site lives at `www.hazwoperosha.com`, but agents and audits start from the bare domain. Its DNS
+is right (A and AAAA records to GitHub Pages, `www` a CNAME to `lj-web-management.github.io`, no CAA
+record in the way), yet GitHub Pages has no certificate for it: `https://hazwoperosha.com/` answers
+with GitHub's `*.github.io` certificate, so every HTTPS client fails before it is redirected to
+`www`. Plain `http://hazwoperosha.com/` does redirect. To fix it (needs admin access to the repo):
+
+1. Settings → Pages → Custom domain: remove `www.hazwoperosha.com` and save, then enter
+   `www.hazwoperosha.com` again and save. GitHub then requests a certificate that covers both
+   `www` and the bare domain; it can take up to an hour.
+2. When the certificate is issued, tick "Enforce HTTPS" on the same page.
+3. Check: `curl -sS -I https://hazwoperosha.com/` returns a 301 to `https://www.hazwoperosha.com/`,
+   and `node tools/check-live.js` passes everything except what the Worker below adds.
+
+With the Worker below deployed, Cloudflare's certificate covers the bare domain and the Worker
+answers it with that same 301 itself, so it works whatever GitHub's certificate covers.
 
 ### Markdown content negotiation (`edge/`)
 
@@ -91,12 +123,16 @@ GitHub Pages can't vary a response on the `Accept` header, so `Accept: text/mark
 for `/` and Markdown 404 bodies need a layer in front of it. `edge/worker.mjs` is a Cloudflare
 Worker that does this the way https://acceptmarkdown.com describes: q-value parsing,
 `Content-Type: text/markdown; charset=utf-8`, `Vary: Accept`, 406 for unsupported types, a
-`404.md` body for unknown paths, and a `Link` header from each HTML page to its Markdown version.
+`404.md` body for unknown paths, a `Link` header from each HTML page to its Markdown version, and a
+301 from the bare domain to `CANONICAL_HOST` (`www.hazwoperosha.com`, in `edge/wrangler.toml`).
 To switch it on:
 
-1. Put the domain's DNS on Cloudflare, with `www` as a proxied CNAME to
-   `lj-web-management.github.io` and SSL/TLS mode "Full".
-2. `cd edge && npx wrangler login && npx wrangler deploy` (route and zone are in `edge/wrangler.toml`).
-3. Check: `curl -sS -i -H 'Accept: text/markdown' https://www.hazwoperosha.com/` returns Markdown with
-   `Vary: Accept`, `curl -sS -i -H 'Accept: text/html' https://www.hazwoperosha.com/` returns HTML, and
-   `curl -sS -i -H 'Accept: text/markdown' https://www.hazwoperosha.com/no-such-page` returns 404 with Markdown.
+1. Put the domain's DNS on Cloudflare (the nameservers are GoDaddy's today), with `www` as a
+   proxied CNAME to `lj-web-management.github.io`, the bare domain's four GitHub Pages A records
+   (185.199.108.153 to 185.199.111.153) proxied too, and SSL/TLS mode "Full".
+2. `cd edge && npx wrangler login && npx wrangler deploy` (routes, zone and `CANONICAL_HOST` are in
+   `edge/wrangler.toml`).
+3. Check: `curl -sS -L -i -H 'Accept: text/markdown' https://hazwoperosha.com/` returns Markdown with
+   `Vary: Accept`, `curl -sS -L -i -H 'Accept: text/html' https://hazwoperosha.com/` returns HTML,
+   `curl -sS -L -i -H 'Accept: text/markdown' https://hazwoperosha.com/no-such-page` returns 404 with
+   Markdown, and `node tools/check-live.js` passes every check.

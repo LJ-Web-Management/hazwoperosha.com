@@ -1,6 +1,6 @@
 # Site Control and Work Zones: Exclusion, Contamination Reduction and Support Zones
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 Site control keeps people away from hazards and keeps contamination where it belongs. OSHA 29 CFR 1910.120(d) requires appropriate site control procedures **before cleanup work begins**.
 

@@ -1,6 +1,6 @@
 # HAZWOPER Glossary: 71 Terms and Acronyms Explained
 
-HAZWOPER guide · 8 min read · Updated 2026-10-30
+HAZWOPER guide · 8 min read · Updated 2026-11-03
 
 Plain-English definitions of the terms and acronyms used in HAZWOPER training, OSHA 29 CFR 1910.120, EPA RCRA and hazardous materials work. Use the site search to jump to a term, or follow the links to the full guides.
 

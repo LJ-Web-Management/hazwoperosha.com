@@ -7,29 +7,8 @@ const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
 const SITE_URL = /<link rel="canonical" href="([^"]+?)\/?">/.exec(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'))[1];
-const TYPES = { '.html': 'text/html; charset=utf-8', '.md': 'text/markdown; charset=utf-8', '.txt': 'text/plain; charset=utf-8',
-  '.xml': 'application/xml', '.json': 'application/json; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'application/javascript; charset=utf-8', '.png': 'image/png' };
-
-// GitHub Pages stand-in: directories redirect to a trailing slash and serve index.html; anything else
-// missing is a 404 with 404.html.
-const originCalls = [];
-async function pages(request) {
-  originCalls.push(new URL(request.url).pathname);
-  const url = new URL(request.url);
-  const file = path.join(ROOT, decodeURIComponent(url.pathname));
-  let target = null;
-  if (file.startsWith(ROOT) && fs.existsSync(file)) {
-    if (fs.statSync(file).isDirectory()) {
-      if (!url.pathname.endsWith('/')) return new Response(null, { status: 301, headers: { Location: url.pathname + '/', 'Vary': 'Accept-Encoding' } });
-      if (fs.existsSync(path.join(file, 'index.html'))) target = path.join(file, 'index.html');
-    } else target = file;
-  }
-  const status = target ? 200 : 404;
-  target = target || path.join(ROOT, '404.html');
-  return new Response(request.method === 'HEAD' ? null : fs.readFileSync(target), {
-    status, headers: { 'Content-Type': TYPES[path.extname(target)] || 'application/octet-stream', 'Vary': 'Accept-Encoding' },
-  });
-}
+const pages = require('./pages-stub.js')(ROOT);
+const originCalls = pages.calls;
 
 let worker;
 before(async () => { worker = await import('../edge/worker.mjs'); });
@@ -137,6 +116,35 @@ test('HEAD requests negotiate without a body', async () => {
   assert.equal(res.status, 200);
   assert.equal(res.headers.get('content-type'), 'text/markdown; charset=utf-8');
   assert.equal(await res.text(), '');
+});
+
+test('the bare domain gets a 301 to the canonical www host, keeping path and query, without reaching the origin', async () => {
+  const host = new URL(SITE_URL).hostname;
+  assert.match(host, /^www\./, 'the site lives on www, so the bare domain is the one to redirect');
+  const env = { CANONICAL_HOST: host };
+  const apex = SITE_URL.replace('://www.', '://');
+  originCalls.length = 0;
+  for (const [p, accept, method] of [['/', 'text/markdown'], ['/', 'text/html'], ['/courses/osha-40-hour-hazwoper-training/?ref=a&b=1', undefined],
+    ['/llms.txt', undefined], ['/no-such-page', 'text/markdown'], ['/', undefined, 'HEAD'], ['/', undefined, 'POST']]) {
+    const res = await worker.handle(new Request(apex + p, { method: method || 'GET', headers: accept ? { accept } : {} }), pages, env);
+    assert.equal(res.status, 301, `${method || 'GET'} ${p}`);
+    assert.equal(res.headers.get('location'), SITE_URL + p, p);
+  }
+  assert.deepEqual(originCalls, [], 'redirects are answered at the edge');
+
+  const www = await worker.handle(new Request(SITE_URL + '/', { headers: { accept: 'text/markdown' } }), pages, env);
+  assert.equal(www.status, 200, 'the canonical host is served, not redirected');
+  assert.equal(www.headers.get('content-type'), 'text/markdown; charset=utf-8');
+  assert.equal((await worker.handle(new Request('https://hazwoperosha-com-edge.example.workers.dev/'), pages, env)).status, 200, 'other hosts are not redirected');
+  assert.equal((await worker.handle(new Request(apex + '/'), pages, {})).status, 200, 'no CANONICAL_HOST, no redirect');
+  assert.equal(worker.apexRedirect(new URL('https://example.com/'), 'example.com'), null, 'a canonical host without www never redirects');
+});
+
+test('wrangler.toml routes www and the bare domain and names the site host as CANONICAL_HOST', () => {
+  const toml = fs.readFileSync(path.join(ROOT, 'edge/wrangler.toml'), 'utf8');
+  const host = new URL(SITE_URL).hostname, apex = host.replace(/^www\./, '');
+  for (const pattern of [`${host}/*`, `${apex}/*`]) assert.ok(toml.includes(`{ pattern = "${pattern}", zone_name = "${apex}" }`), pattern);
+  assert.match(toml, new RegExp(`\\n\\[vars\\]\\n(?:#.*\\n)*CANONICAL_HOST = "${host.replace(/\./g, '\\.')}"\\n`));
 });
 
 test('static files and non-GET requests pass through untouched', async () => {
