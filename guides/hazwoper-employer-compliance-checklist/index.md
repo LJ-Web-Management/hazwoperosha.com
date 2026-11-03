@@ -1,6 +1,6 @@
 # HAZWOPER Compliance Checklist for Employers
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 Use this checklist to review your HAZWOPER program. It follows the structure of 29 CFR 1910.120 and points to the guides for each topic. It isn't legal advice; your site's hazards and contracts decide what you actually need.
 

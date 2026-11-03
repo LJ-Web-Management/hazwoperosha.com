@@ -1,6 +1,6 @@
 # What Is HAZWOPER? The Complete Guide to OSHA 29 CFR 1910.120
 
-HAZWOPER guide · 4 min read · Updated 2026-10-30
+HAZWOPER guide · 4 min read · Updated 2026-11-03
 
 **HAZWOPER** stands for **Hazardous Waste Operations and Emergency Response**. It is the OSHA standard at **29 CFR 1910.120** (repeated word for word for construction at 29 CFR 1926.65) that sets safety, health and training rules for people who clean up hazardous waste, work at hazardous waste treatment, storage and disposal facilities, or respond to releases of hazardous substances. OSHA published the final rule in 1989 under the Superfund Amendments and Reauthorization Act (SARA).
 

@@ -1,6 +1,6 @@
 # Cal/OSHA HAZWOPER (Title 8 CCR 5192): California Training Guide
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 California runs its own OSHA-approved state plan, so HAZWOPER work there falls under **Cal/OSHA, Title 8 California Code of Regulations Section 5192**, "Hazardous Waste Operations and Emergency Response." It follows the federal 29 CFR 1910.120 structure, and state plans must be at least as effective as federal OSHA.
 

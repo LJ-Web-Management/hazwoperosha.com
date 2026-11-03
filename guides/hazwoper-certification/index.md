@@ -1,6 +1,6 @@
 # How to Get HAZWOPER Certified Online (and How Long It Lasts)
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 "HAZWOPER certified" means you have completed the training OSHA requires for your role under 29 CFR 1910.120 and received a written certificate from the training provider. Here is the process from start to finish.
 

@@ -55,6 +55,22 @@ test('homepage metadata: lang, canonical, og:image, og:type and a brand-first ti
   assert.ok(new URL(SITE_URL).hostname.replace(/^www\./, '').toLowerCase() === BRAND.toLowerCase(), 'brand matches the domain');
 });
 
+test('homepage names its main product terms in meta keywords and Organization keywords/knowsAbout, and uses them on the page', () => {
+  const meta = /<meta name="keywords" content="([^"]+)">/.exec(INDEX);
+  assert.ok(meta, 'homepage has <meta name="keywords">');
+  const terms = meta[1].split(',').map(s => s.trim());
+  assert.ok(terms.length >= 3 && terms.every(Boolean), 'several non-empty terms');
+  const org = jsonLd(INDEX)[0];
+  assert.deepEqual(org.knowsAbout, terms, 'Organization.knowsAbout matches the meta keywords');
+  assert.equal(org.keywords, terms.join(', '), 'Organization.keywords matches the meta keywords');
+  const text = mainText(INDEX).toLowerCase();
+  for (const t of terms) assert.ok(text.includes(t.toLowerCase()), `"${t}" appears in the homepage text`);
+  const title = /<title>([^<]+)<\/title>/.exec(INDEX)[1].toLowerCase();
+  const h1 = visibleText(/<h1[^>]*>([\s\S]*?)<\/h1>/.exec(INDEX)[1]).toLowerCase();
+  assert.ok(title.includes(terms[0].toLowerCase()) && h1.includes(terms[0].toLowerCase()), `main term "${terms[0]}" is in the title and H1`);
+  for (const f of HTML_FILES.filter(f => f !== 'index.html')) assert.doesNotMatch(read(f), /<meta name="keywords"/, `${f}: keywords only on the homepage`);
+});
+
 test('every page with JSON-LD leads with a complete Organization block', () => {
   for (const f of HTML_FILES.filter(f => read(f).includes('application/ld+json'))) {
     const [org, rest] = jsonLd(read(f));
@@ -106,8 +122,11 @@ test('every content page has a Markdown version linked from its <head>', () => {
   assert.ok(count > 50);
 });
 
-test('404: noindex HTML page plus a Markdown body that points agents to llms.txt and the sitemap', () => {
-  assert.match(read('404.html'), /<meta name="robots" content="noindex/);
+test('404: noindex HTML page plus a Markdown body, both pointing agents to llms.txt and the sitemap', () => {
+  const html = read('404.html');
+  assert.match(html, /<meta name="robots" content="noindex/);
+  assert.match(mainText(html), /^Page not found .{20,}/, 'HTML 404 explains the error');
+  for (const f of ['llms.txt', 'sitemap.xml']) assert.ok(html.includes(`<a href="${SITE_URL}/${f}">`), `HTML 404 links ${f} absolutely`);
   const md = read('404.md');
   assert.match(md, /^# Page not found/);
   assert.ok(md.length >= 20);

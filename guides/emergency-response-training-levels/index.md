@@ -1,6 +1,6 @@
 # HAZWOPER Emergency Response Training Levels: Awareness to Incident Commander
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 Paragraph (q) of 29 CFR 1910.120 covers emergency response to hazardous substance releases at any workplace. Employers whose employees respond need a written **emergency response plan**, an **incident command system (ICS)**, and responders trained to the level of the duties they will perform.
 

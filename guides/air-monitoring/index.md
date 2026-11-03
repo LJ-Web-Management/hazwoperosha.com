@@ -1,6 +1,6 @@
 # HAZWOPER Air Monitoring: Oxygen, LEL, Toxics and Direct-Reading Instruments
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 Air monitoring tells you what is in the air, how much of it, and whether workers' PPE and work zones are adequate. OSHA 29 CFR 1910.120(h) requires monitoring during initial site entry and periodically after that, whenever there may be exposure above permissible limits, a change in conditions or a new operation.
 

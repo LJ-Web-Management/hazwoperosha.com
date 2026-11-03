@@ -1,6 +1,6 @@
 # 40 vs 24 vs 8 Hour HAZWOPER: Which Training Do You Need?
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 The number of hours of HAZWOPER training you need depends on two things: **what you do on site** and **how much exposure you may have**. Here is how OSHA 29 CFR 1910.120(e)(3) sorts workers.
 

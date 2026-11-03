@@ -1,6 +1,6 @@
 # HAZWOPER Medical Surveillance Requirements (1910.120(f))
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 HAZWOPER requires employers to run a **medical surveillance program** for certain workers, under 29 CFR 1910.120(f). Exams are done by or under the supervision of a licensed physician, at no cost to the employee, without loss of pay, and at a reasonable time and place.
 

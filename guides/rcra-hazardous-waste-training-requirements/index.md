@@ -1,6 +1,6 @@
 # RCRA Hazardous Waste Training Requirements by Generator Category
 
-HAZWOPER guide · 2 min read · Updated 2026-10-30
+HAZWOPER guide · 2 min read · Updated 2026-11-03
 
 The Resource Conservation and Recovery Act (RCRA) regulates hazardous waste from "cradle to grave." EPA's training requirements depend on how much hazardous waste a site generates each month. RCRA training is a **separate requirement** from OSHA HAZWOPER, though many facilities need both.
 
