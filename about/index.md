@@ -8,7 +8,7 @@ HazwoperOSHA.com is operated by HAZWOPER OSHA Training LLC, a limited liability 
 
 ## What we offer
 
-- 42 online courses: OSHA HAZWOPER 40 hour, 24 hour and 8 hour refresher, supervisor, incident command, first responder awareness, industry-specific 40 hour, Cal/OSHA, Spanish, RCRA hazardous waste and TSDF training.
+- 26 online courses: OSHA HAZWOPER 40 hour, 24 hour and 8 hour refresher, supervisor, incident command, first responder awareness, industry-specific 40 hour, Cal/OSHA, Spanish, RCRA hazardous waste and TSDF training.
 - 16 free guides and 7 practice quizzes with answers, free to read with no sign-up.
 - One cart and one checkout for a single learner or a whole team, with phone and email help for group orders and purchase orders.
 

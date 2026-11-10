@@ -49,6 +49,8 @@ OSHA 40-Hour HAZWOPER Training
 - [HAZWOPER Compliance Checklist for Employers](https://www.hazwoperosha.com/guides/hazwoper-employer-compliance-checklist/)
 - [HAZWOPER Glossary: 71 Terms and Acronyms Explained](https://www.hazwoperosha.com/guides/hazwoper-glossary/)
 - [Free quiz: HAZWOPER 40 Hour Practice Test](https://www.hazwoperosha.com/quizzes/hazwoper-40-hour-practice-test/)
+- [Free quiz: HAZWOPER PPE Levels Quiz (Levels A, B, C and D)](https://www.hazwoperosha.com/quizzes/ppe-levels-quiz/)
+- [Free quiz: Decontamination and Site Control Quiz](https://www.hazwoperosha.com/quizzes/decontamination-and-site-control-quiz/)
 
 ## Related HAZWOPER courses
 

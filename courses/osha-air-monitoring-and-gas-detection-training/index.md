@@ -38,12 +38,12 @@ Confined space attendants, hazmat technicians, industrial hygiene
 
 ## Related HAZWOPER courses
 
-- [OSHA 40 Hour HAZWOPER for Oil & Gas Spill Response](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-oil-and-gas-spill-response/) · 40 Hours · $249.99 - 29 CFR 1910.120(e) / 1926.65(e)
-- [OSHA Spill Prevention and Response Safety Training](https://www.hazwoperosha.com/courses/osha-spill-prevention-and-response-safety-training/) · 2 Hours · $49.99 - 29 CFR 1910.120 / 40 CFR 112
-- [Spill Response Equipment - Absorbent & Containment Booms](https://www.hazwoperosha.com/courses/spill-response-equipment-absorbent-and-containment-booms/) · 1 Hour · $24.99 - 40 CFR 112 / 29 CFR 1910.120
-- [Spill Response Equipment - Spill Kit Selection & Use](https://www.hazwoperosha.com/courses/spill-response-equipment-spill-kit-selection-and-use/) · 1 Hour · $24.99 - 40 CFR 112 / 29 CFR 1910.120
-- [HAZWOPER Micro-Module: Air Monitoring & Direct-Reading Instruments](https://www.hazwoperosha.com/courses/hazwoper-micro-module-air-monitoring-and-direct-reading-instruments/) · 20 Min · $14.99 - 29 CFR 1910.120(e) / 1926.65(e)
-- [HAZWOPER Micro-Module: Decontamination Procedures](https://www.hazwoperosha.com/courses/hazwoper-micro-module-decontamination-procedures/) · 20 Min · $14.99 - 29 CFR 1910.120(e) / 1926.65(e)
+- [OSHA Spill Prevention and Response Safety Training](https://www.hazwoperosha.com/courses/osha-spill-prevention-and-response-safety-training/) · 2 Hours · $29.99 - 29 CFR 1910.120 / 40 CFR 112
+- [OSHA 40 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training/) · 40 Hours · $249.99 - 29 CFR 1910.120(e) / 1926.65(e)
+- [OSHA 24 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-24-hour-hazwoper-training/) · 24 Hours · $169.99 - 29 CFR 1910.120(e)
+- [OSHA 8 Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-refresher-training/) · 8 Hours · $59.99 - 29 CFR 1910.120(e)(8)
+- [OSHA 4-Hour HAZWOPER First Responder Awareness Level Training](https://www.hazwoperosha.com/courses/osha-4-hour-hazwoper-first-responder-awareness-level-training/) · 4 Hours · $61.99 - 29 CFR 1910.120(q)(6)(i)
+- [OSHA 40-Hour HAZWOPER Training (Spanish)](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training-spanish/) · 40 Hours · $249.99 - 29 CFR 1910.120(e)(3)(i) - Spanish language
 
 ---
 

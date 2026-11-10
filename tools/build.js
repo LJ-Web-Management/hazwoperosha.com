@@ -74,7 +74,7 @@ const GROUPS = [
   { id: 'refresher', title: 'HAZWOPER Refresher, Supervisor & Incident Command', blurb: 'Annual 8-hour refreshers required to keep certification current, plus supervisor and (q) incident command training.' },
   { id: 'state', title: 'Cal/OSHA & State-Plan HAZWOPER', blurb: 'California 8 CCR 5192 and state-plan versions of HAZWOPER for workers in OSHA state-plan states.' },
   { id: 'rcra', title: 'RCRA Hazardous Waste & TSDF', blurb: 'EPA RCRA generator, universal waste, manifest and TSD facility training that pairs with HAZWOPER.' },
-  { id: 'spill', title: 'Spill Response, Air Monitoring & Micro-Modules', blurb: 'Short focused modules on PPE levels, decontamination, air monitoring, site characterization and spill response.' },
+  { id: 'spill', title: 'Spill Response & Air Monitoring', blurb: 'Short courses on spill prevention and response, and on air monitoring and gas detection.' },
   { id: 'trainer', title: 'HAZWOPER Train-the-Trainer', blurb: 'Become a qualified in-house HAZWOPER instructor for your organization.' },
 ];
 GROUPS.forEach(g => Object.assign(g, (COPY.groups || {})[g.id]));
@@ -123,7 +123,7 @@ const FAQ = COPY.faq || [
   ['Is online HAZWOPER training accepted by OSHA?', 'Yes. Online instruction can satisfy the classroom portion of HAZWOPER training when it covers the required topics and the trainee has access to a qualified trainer for questions. Employers remain responsible for any site-specific instruction and the supervised field experience OSHA requires.'],
   ['How fast do I get my HAZWOPER certificate?', 'Your certificate of completion is available to download and print immediately after you finish the course and pass the final exam. A wallet card is included.'],
   ['Can I take HAZWOPER training in Spanish?', 'Yes. The OSHA 40-Hour HAZWOPER Training is available in a full Spanish-language version.'],
-  ['Do you offer Cal/OSHA HAZWOPER?', 'Yes. Cal/OSHA 40-hour, 24-hour and 8-hour refresher courses aligned to Title 8 CCR 5192 are available, as well as Cal/OSHA TSDF RCRA versions.'],
+  ['Do you offer Cal/OSHA HAZWOPER?', 'Yes. Cal/OSHA 40-hour, 24-hour and 8-hour refresher courses aligned to Title 8 CCR 5192 are available.'],
   ['Do you offer group or company HAZWOPER training?', `Yes. Add every course your team needs to the cart, set the number of seats for each, and check out once. For purchase orders or large groups, call ${PHONE} or email ${EMAIL}.`],
   ['Do you have free HAZWOPER practice tests?', 'Yes. Free practice quizzes with answers and explanations cover the 40 hour and 8 hour refresher, PPE levels, air monitoring, decontamination and site control, first responder awareness and RCRA hazardous waste.'],
   ['How long do I have to finish a course?', 'Courses are self-paced. You can log in and out as often as you like and your progress is saved automatically, so you can complete the course around your work schedule.'],

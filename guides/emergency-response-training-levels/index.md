@@ -1,6 +1,6 @@
 # HAZWOPER Emergency Response Training Levels: Awareness to Incident Commander
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 Paragraph (q) of 29 CFR 1910.120 covers emergency response to hazardous substance releases at any workplace. Employers whose employees respond need a written **emergency response plan**, an **incident command system (ICS)**, and responders trained to the level of the duties they will perform.
 
@@ -41,7 +41,7 @@ Skilled support personnel, such as equipment operators brought in for a specific
 
 ## Do you need a response team?
 
-An employer that will **evacuate** employees and call outside responders, and not let its own employees respond, can follow an emergency action plan under 1910.38 instead of paragraph (q). Employers who expect employees to respond need paragraph (q). Industry options: [manufacturing ERT](https://www.hazwoperosha.com/courses/manufacturing-emergency-response-team-ert-training/), [fire and HAZMAT teams](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-emergency-response-fire-hazmat-teams/), [utility and pipeline](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-utility-pipeline-emergency-response/).
+An employer that will **evacuate** employees and call outside responders, and not let its own employees respond, can follow an emergency action plan under 1910.38 instead of paragraph (q). Employers who expect employees to respond need paragraph (q). For manufacturing plants, see [manufacturing ERT](https://www.hazwoperosha.com/courses/manufacturing-emergency-response-team-ert-training/).
 
 ## Frequently asked questions
 
@@ -67,11 +67,7 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 
 [OSHA 8 Hour HAZWOPER (q) Incident Command Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-q-incident-command-training/)
 
-8 Hours · **$179.99**
-
-[OSHA 40 Hour HAZWOPER for Emergency Response/Fire-Hazmat Teams](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-emergency-response-fire-hazmat-teams/)
-
-40 Hours · **$249.99**
+8 Hours · **$199.99**
 
 [Manufacturing Emergency Response Team (ERT) Training](https://www.hazwoperosha.com/courses/manufacturing-emergency-response-team-ert-training/)
 

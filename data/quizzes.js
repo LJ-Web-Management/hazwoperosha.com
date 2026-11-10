@@ -51,7 +51,7 @@ module.exports = [
     title: 'HAZWOPER PPE Levels Quiz (Levels A, B, C and D)',
     short: 'PPE levels quiz',
     desc: 'Free quiz on HAZWOPER PPE levels A, B, C and D with answers. Test what each level includes, when to use it, respirator types and heat stress.',
-    course: 'hazwoper-micro-module-ppe-levels-a-b-c-and-d-explained',
+    course: 'osha-40-hour-hazwoper-training',
     guide: 'ppe-levels-a-b-c-d',
     questions: [
       { q: 'What makes Level A different from Level B?', o: ['Level A uses an air-purifying respirator', 'Level A uses a totally encapsulating, vapor-tight suit', 'Level A has no gloves', 'Level B uses a supplied-air hood only'], a: 1, e: 'Both use SCBA or supplied air. Level A adds a vapor-tight, fully encapsulating suit.' },
@@ -91,7 +91,7 @@ module.exports = [
     title: 'Decontamination and Site Control Quiz',
     short: 'Decon & site control quiz',
     desc: 'Free HAZWOPER decontamination and site control quiz with answers: work zones, decon line order, access control points, the buddy system and emergency decon.',
-    course: 'hazwoper-micro-module-decontamination-procedures',
+    course: 'osha-40-hour-hazwoper-training',
     guide: 'hazwoper-decontamination',
     questions: [
       { q: 'What is another name for the exclusion zone?', o: ['Cold zone', 'Warm zone', 'Hot zone', 'Safe zone'], a: 2, e: 'The exclusion zone is the hot zone where contamination is or could be present.' },

@@ -1,6 +1,6 @@
 # Site Control and Work Zones: Exclusion, Contamination Reduction and Support Zones
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 Site control keeps people away from hazards and keeps contamination where it belongs. OSHA 29 CFR 1910.120(d) requires appropriate site control procedures **before cleanup work begins**.
 
@@ -58,17 +58,13 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 
 ## Get trained
 
-[HAZWOPER Micro-Module: Site Characterization & Hazard Assessment](https://www.hazwoperosha.com/courses/hazwoper-micro-module-site-characterization-and-hazard-assessment/)
-
-20 Min · **$14.99**
-
 [OSHA 40 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training/)
 
 40 Hours · **$249.99**
 
 [OSHA 8 Hour HAZWOPER Supervisor Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-supervisor-training/)
 
-8 Hours · **$179.99**
+8 Hours · **$69.99**
 
 ## Test yourself
 

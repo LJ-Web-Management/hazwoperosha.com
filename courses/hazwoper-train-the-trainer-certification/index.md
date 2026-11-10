@@ -38,10 +38,10 @@ In-house HAZWOPER trainers/EHS managers
 
 - [OSHA 40 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training/) · 40 Hours · $249.99 - 29 CFR 1910.120(e) / 1926.65(e)
 - [OSHA 24 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-24-hour-hazwoper-training/) · 24 Hours · $169.99 - 29 CFR 1910.120(e)
-- [OSHA 8 Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-refresher-training/) · 8 Hours · $89.99 - 29 CFR 1910.120(e)(8)
+- [OSHA 8 Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-refresher-training/) · 8 Hours · $59.99 - 29 CFR 1910.120(e)(8)
 - [OSHA 4-Hour HAZWOPER First Responder Awareness Level Training](https://www.hazwoperosha.com/courses/osha-4-hour-hazwoper-first-responder-awareness-level-training/) · 4 Hours · $61.99 - 29 CFR 1910.120(q)(6)(i)
 - [OSHA 40-Hour HAZWOPER Training (Spanish)](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training-spanish/) · 40 Hours · $249.99 - 29 CFR 1910.120(e)(3)(i) - Spanish language
-- [Cal/OSHA 40-Hour HAZWOPER Training (2026)](https://www.hazwoperosha.com/courses/cal-osha-40-hour-hazwoper-training/) · 40 Hours · $219.99 - 8 CCR 5192(e)
+- [Cal/OSHA 40-Hour HAZWOPER Training (2026)](https://www.hazwoperosha.com/courses/cal-osha-40-hour-hazwoper-training/) · 40 Hours · $229.99 - 8 CCR 5192(e)
 
 ---
 

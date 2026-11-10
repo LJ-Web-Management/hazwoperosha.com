@@ -1,8 +1,13 @@
 # HAZWOPER OSHA Training - HAZWOPER course landing site
 
 Static, SEO-focused landing site listing every HAZWOPER-related course (OSHA 40/24/8 hour,
-refresher, supervisor, incident command, first responder, Cal/OSHA, Spanish, RCRA/TSDF,
-micro-modules, train-the-trainer) with a page per course.
+refresher, supervisor, incident command, first responder, Cal/OSHA, Spanish, RCRA/TSDF and
+train-the-trainer) with a page per course.
+
+Checkout sends the LMS course id from `data/lms-ids.json` (the `course_id` on the course's hazwoper-osha.com page),
+not the `catalogId` in `data/source.json` (a row in the ICTrainingUS spreadsheet). On 2026-11-10 the ids were
+corrected, prices were matched to the LMS (which sets the amount charged) and the 16 courses with no LMS match
+were removed.
 
 Live: https://www.hazwoperosha.com/ (custom domain in `CNAME`; `site.config.js` sets the same URL for canonical links, sitemap and structured data)
 
