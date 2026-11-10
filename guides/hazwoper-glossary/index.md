@@ -1,6 +1,6 @@
 # HAZWOPER Glossary: 71 Terms and Acronyms Explained
 
-HAZWOPER guide · 8 min read · Updated 2026-11-03
+HAZWOPER guide · 8 min read · Updated 2026-11-10
 
 Plain-English definitions of the terms and acronyms used in HAZWOPER training, OSHA 29 CFR 1910.120, EPA RCRA and hazardous materials work. Use the site search to jump to a term, or follow the links to the full guides.
 
@@ -92,7 +92,7 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 
 [RCRA Hazardous Waste Generator Training](https://www.hazwoperosha.com/courses/rcra-hazardous-waste-generator-training/)
 
-8 Hours · **$89.99**
+8 Hours · **$134.99**
 
 ## Test yourself
 

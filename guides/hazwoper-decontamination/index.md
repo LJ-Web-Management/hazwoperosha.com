@@ -1,6 +1,6 @@
 # HAZWOPER Decontamination Procedures: Decon Line Setup and Steps
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 Decontamination ("decon") removes or neutralizes contaminants that have built up on people and equipment, so hazards don't leave the work area. OSHA 29 CFR 1910.120(k) requires a written decontamination procedure, developed and communicated to employees **before anyone enters a site** where they may be exposed.
 
@@ -69,10 +69,6 @@ Not if it would delay life-saving care. Perform gross decon if it can be done qu
 This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes. It is not legal advice. Always check the current regulation text and your site safety and health plan.
 
 ## Get trained
-
-[HAZWOPER Micro-Module: Decontamination Procedures](https://www.hazwoperosha.com/courses/hazwoper-micro-module-decontamination-procedures/)
-
-20 Min · **$14.99**
 
 [OSHA 40 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training/)
 

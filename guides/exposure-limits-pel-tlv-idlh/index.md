@@ -1,6 +1,6 @@
 # Exposure Limits Explained: PEL, REL, TLV, STEL, Ceiling and IDLH
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 HAZWOPER training levels, PPE selection, medical surveillance and air monitoring all depend on **exposure limits**: airborne concentrations a worker can be exposed to without expected harm. Here are the terms you'll see on safety data sheets and in site plans.
 

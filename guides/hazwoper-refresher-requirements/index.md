@@ -1,6 +1,6 @@
 # HAZWOPER 8 Hour Refresher Requirements: Deadlines, Lapses and Records
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 Workers trained at the 40 or 24 hour HAZWOPER level must complete **at least 8 hours of refresher training every year**. The rule is 29 CFR 1910.120(e)(8) for cleanup sites and (p)(7)(ii) for TSD facilities. Emergency responders under paragraph (q)(8) need annual refresher training of enough content and length to keep their competencies, or must show their competency each year.
 
@@ -29,7 +29,7 @@ The 8 hours are meant to keep core skills sharp and pass on what has changed. Ty
 - [OSHA 8 Hour HAZWOPER Supervisor Refresher Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-supervisor-refresher-training/): refresher with supervisor-level content
 - [8 Hour HAZWOPER and Incident Command Refresher Training](https://www.hazwoperosha.com/courses/8-hour-hazwoper-and-incident-command-refresher-training/): combined refresher for incident command roles
 - [OSHA 8 Hour HAZWOPER Annual Refresher - RCRA TSD Operations Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-annual-refresher-rcra-tsd-operations-training/): for TSD facility employees
-- [Cal/OSHA 8-Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/cal-osha-8-hour-hazwoper-refresher-training/) and [state-plan versions](https://www.hazwoperosha.com/courses/8-hour-hazwoper-refresher-state-plan-versions-available/)
+- [Cal/OSHA 8-Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/cal-osha-8-hour-hazwoper-refresher-training/): for California workers
 
 ## Records to keep
 
@@ -55,19 +55,15 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 
 [OSHA 8 Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-refresher-training/)
 
-8 Hours · **$89.99**
+8 Hours · **$59.99**
 
 [OSHA 8 Hour HAZWOPER Supervisor Refresher Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-supervisor-refresher-training/)
 
-8 Hours · **$149.99**
+8 Hours · **$69.99**
 
 [Cal/OSHA 8-Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/cal-osha-8-hour-hazwoper-refresher-training/)
 
-8 Hours · **$89.99**
-
-[8 Hour HAZWOPER Refresher - State-Plan Versions Available](https://www.hazwoperosha.com/courses/8-hour-hazwoper-refresher-state-plan-versions-available/)
-
-8 Hours · **$84.99**
+8 Hours · **$149.99**
 
 ## Test yourself
 

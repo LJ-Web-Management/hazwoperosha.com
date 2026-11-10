@@ -1,6 +1,6 @@
 # 40 vs 24 vs 8 Hour HAZWOPER: Which Training Do You Need?
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 The number of hours of HAZWOPER training you need depends on two things: **what you do on site** and **how much exposure you may have**. Here is how OSHA 29 CFR 1910.120(e)(3) sorts workers.
 
@@ -11,7 +11,7 @@ Required for **general site workers** at uncontrolled hazardous waste sites who 
 - 40 hours of instruction off the site
 - Plus at least **3 days of actual field experience** under a trained, experienced supervisor
 
-Industry versions cover the same 40 hours with scenarios from your field: [construction](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-construction-contaminated-sites/), [environmental remediation](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-environmental-remediation/), [oil and gas spill response](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-oil-and-gas-spill-response/), [fire and HAZMAT teams](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-emergency-response-fire-hazmat-teams/) and [utility and pipeline](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-utility-pipeline-emergency-response/). It is also offered [in Spanish](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training-spanish/).
+The 40-hour course is written for every industry, from construction and remediation to oil and gas, utilities and HAZMAT teams. It is also offered [in Spanish](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training-spanish/).
 
 ## 24 hour HAZWOPER
 
@@ -74,11 +74,11 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 
 [OSHA 8 Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-refresher-training/)
 
-8 Hours · **$89.99**
+8 Hours · **$59.99**
 
 [OSHA 8 Hour HAZWOPER Supervisor Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-supervisor-training/)
 
-8 Hours · **$179.99**
+8 Hours · **$69.99**
 
 ## Test yourself
 

@@ -1,6 +1,6 @@
 # Cal/OSHA HAZWOPER (Title 8 CCR 5192): California Training Guide
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 California runs its own OSHA-approved state plan, so HAZWOPER work there falls under **Cal/OSHA, Title 8 California Code of Regulations Section 5192**, "Hazardous Waste Operations and Emergency Response." It follows the federal 29 CFR 1910.120 structure, and state plans must be at least as effective as federal OSHA.
 
@@ -13,8 +13,6 @@ The same groups as federal HAZWOPER, for work in California: cleanup workers at 
 - [Cal/OSHA 40-Hour HAZWOPER Training (2026)](https://www.hazwoperosha.com/courses/cal-osha-40-hour-hazwoper-training/): general site workers, plus 3 days supervised field experience
 - [Cal/OSHA 24-Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/cal-osha-24-hour-hazwoper-training/): occasional workers and workers in characterized, low-exposure areas, plus 1 day field experience
 - [Cal/OSHA 8-Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/cal-osha-8-hour-hazwoper-refresher-training/): required every year
-- [Cal/OSHA 24 hour HAZWOPER TSDF RCRA Training](https://www.hazwoperosha.com/courses/cal-osha-24-hour-hazwoper-tsdf-rcra-training/) and [Cal/OSHA 8-hour HAZWOPER TSDF RCRA Refresher Training](https://www.hazwoperosha.com/courses/cal-osha-8-hour-hazwoper-tsdf-rcra-refresher-training/): for TSD facility employees
-- [Cal/OSHA RCRA Hazardous Waste Training](https://www.hazwoperosha.com/courses/cal-osha-rcra-hazardous-waste-training/): hazardous waste handling for California generators
 
 ## California-specific points
 
@@ -25,7 +23,7 @@ The same groups as federal HAZWOPER, for work in California: cleanup workers at 
 
 ## Other state-plan states
 
-More than 20 states run their own OSHA plans covering private employers, including Washington, Oregon, Michigan, Minnesota, Virginia, North Carolina and others. Most adopt HAZWOPER rules identical or very close to the federal standard. See the [state-plan refresher](https://www.hazwoperosha.com/courses/8-hour-hazwoper-refresher-state-plan-versions-available/).
+More than 20 states run their own OSHA plans covering private employers, including Washington, Oregon, Michigan, Minnesota, Virginia, North Carolina and others. Most adopt HAZWOPER rules identical or very close to the federal standard. The federal [8-hour refresher](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-refresher-training/) covers the core.
 
 ## Frequently asked questions
 
@@ -47,19 +45,15 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 
 [Cal/OSHA 40-Hour HAZWOPER Training (2026)](https://www.hazwoperosha.com/courses/cal-osha-40-hour-hazwoper-training/)
 
-40 Hours · **$219.99**
+40 Hours · **$229.99**
 
 [Cal/OSHA 24-Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/cal-osha-24-hour-hazwoper-training/)
 
-24 Hours · **$169.99**
+24 Hours · **$189.99**
 
 [Cal/OSHA 8-Hour HAZWOPER Refresher Training](https://www.hazwoperosha.com/courses/cal-osha-8-hour-hazwoper-refresher-training/)
 
-8 Hours · **$89.99**
-
-[Cal/OSHA 24 hour HAZWOPER TSDF RCRA Training](https://www.hazwoperosha.com/courses/cal-osha-24-hour-hazwoper-tsdf-rcra-training/)
-
-24 Hours · **$249.99**
+8 Hours · **$149.99**
 
 ## Test yourself
 

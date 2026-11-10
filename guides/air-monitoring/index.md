@@ -1,6 +1,6 @@
 # HAZWOPER Air Monitoring: Oxygen, LEL, Toxics and Direct-Reading Instruments
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 Air monitoring tells you what is in the air, how much of it, and whether workers' PPE and work zones are adequate. OSHA 29 CFR 1910.120(h) requires monitoring during initial site entry and periodically after that, whenever there may be exposure above permissible limits, a change in conditions or a new operation.
 
@@ -69,10 +69,6 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 [OSHA Air Monitoring and Gas Detection Training](https://www.hazwoperosha.com/courses/osha-air-monitoring-and-gas-detection-training/)
 
 2 Hours · **$49.99**
-
-[HAZWOPER Micro-Module: Air Monitoring & Direct-Reading Instruments](https://www.hazwoperosha.com/courses/hazwoper-micro-module-air-monitoring-and-direct-reading-instruments/)
-
-20 Min · **$14.99**
 
 [OSHA 40 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training/)
 

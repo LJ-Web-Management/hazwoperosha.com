@@ -1,6 +1,6 @@
 # PPE Levels A, B, C and D Explained (EPA and OSHA HAZWOPER)
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 HAZWOPER sorts chemical protective ensembles into four levels, A through D, described in OSHA 29 CFR 1910.120 Appendix B and in EPA guidance. The level is chosen from the known or suspected hazard, the routes of exposure and how much is known about the chemicals involved.
 
@@ -72,10 +72,6 @@ No. Level D is a work uniform with no respiratory protection and is only for sit
 This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes. It is not legal advice. Always check the current regulation text and your site safety and health plan.
 
 ## Get trained
-
-[HAZWOPER Micro-Module: PPE Levels A, B, C & D Explained](https://www.hazwoperosha.com/courses/hazwoper-micro-module-ppe-levels-a-b-c-and-d-explained/)
-
-15 Min · **$12.99**
 
 [OSHA 40 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training/)
 

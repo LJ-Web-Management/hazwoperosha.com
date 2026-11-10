@@ -1,6 +1,6 @@
 # Site-Specific Safety and Health Plan (HASP) Requirements Under 1910.120(b)
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 Every hazardous waste cleanup site needs a written **site-specific safety and health plan**, often called a HASP. It is part of the employer's safety and health program under 29 CFR 1910.120(b), must be kept on site, and must address the safety and health hazards of each phase of the operation.
 
@@ -55,15 +55,11 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 
 [OSHA 8 Hour HAZWOPER Supervisor Training](https://www.hazwoperosha.com/courses/osha-8-hour-hazwoper-supervisor-training/)
 
-8 Hours · **$179.99**
+8 Hours · **$69.99**
 
 [OSHA 40 Hour HAZWOPER Training](https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-training/)
 
 40 Hours · **$249.99**
-
-[HAZWOPER Micro-Module: Site Characterization & Hazard Assessment](https://www.hazwoperosha.com/courses/hazwoper-micro-module-site-characterization-and-hazard-assessment/)
-
-20 Min · **$14.99**
 
 ## Test yourself
 

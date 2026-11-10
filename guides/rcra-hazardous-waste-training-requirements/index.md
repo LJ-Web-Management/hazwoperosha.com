@@ -1,6 +1,6 @@
 # RCRA Hazardous Waste Training Requirements by Generator Category
 
-HAZWOPER guide · 2 min read · Updated 2026-11-03
+HAZWOPER guide · 2 min read · Updated 2026-11-10
 
 The Resource Conservation and Recovery Act (RCRA) regulates hazardous waste from "cradle to grave." EPA's training requirements depend on how much hazardous waste a site generates each month. RCRA training is a **separate requirement** from OSHA HAZWOPER, though many facilities need both.
 
@@ -29,7 +29,7 @@ Generators can collect up to **55 gallons** of non-acute hazardous waste, or **1
 
 ## Manifests and DOT training
 
-Off-site shipments travel on the Uniform Hazardous Waste Manifest (EPA Form 8700-22), now handled through EPA's e-Manifest system. Anyone who signs a manifest or prepares a hazardous materials shipment is a DOT **hazmat employee** and needs training under 49 CFR 172.704 at least **every 3 years**. See [Hazardous Waste Manifest Training](https://www.hazwoperosha.com/courses/hazardous-waste-manifest-training/) and [EPA RCRA/DOT Combined Hazardous Materials Compliance Training](https://www.hazwoperosha.com/courses/epa-rcra-dot-combined-hazardous-materials-compliance-training/).
+Off-site shipments travel on the Uniform Hazardous Waste Manifest (EPA Form 8700-22), now handled through EPA's e-Manifest system. Anyone who signs a manifest or prepares a hazardous materials shipment is a DOT **hazmat employee** and needs training under 49 CFR 172.704 at least **every 3 years**. See [Hazardous Waste Manifest Training](https://www.hazwoperosha.com/courses/hazardous-waste-manifest-training/).
 
 ## Universal waste
 
@@ -59,15 +59,15 @@ This guide summarizes federal OSHA, Cal/OSHA and EPA rules for training purposes
 
 [RCRA Hazardous Waste Generator Training](https://www.hazwoperosha.com/courses/rcra-hazardous-waste-generator-training/)
 
-8 Hours · **$89.99**
+8 Hours · **$134.99**
 
 [RCRA Hazardous Waste Generator Refresher Training](https://www.hazwoperosha.com/courses/rcra-hazardous-waste-generator-refresher-training/)
 
-4 Hours · **$59.99**
+4 Hours · **$124.99**
 
 [Hazardous Waste Manifest Training](https://www.hazwoperosha.com/courses/hazardous-waste-manifest-training/)
 
-2 Hours · **$34.99**
+2 Hours · **$58.99**
 
 [RCRA Universal Waste Handler Training](https://www.hazwoperosha.com/courses/rcra-universal-waste-handler-training/)
 

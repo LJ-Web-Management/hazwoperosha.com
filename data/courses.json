@@ -20,7 +20,7 @@
  {
   "slug": "osha-8-hour-hazwoper-refresher-training",
   "name": "OSHA 8 Hour HAZWOPER Refresher Training",
-  "price": 89.99,
+  "price": 59.99,
   "duration": "8 Hours",
   "citation": "29 CFR 1910.120(e)(8)",
   "group": "refresher",
@@ -47,70 +47,16 @@
  {
   "slug": "cal-osha-40-hour-hazwoper-training",
   "name": "Cal/OSHA 40-Hour HAZWOPER Training (2026)",
-  "price": 219.99,
+  "price": 229.99,
   "duration": "40 Hours",
   "citation": "8 CCR 5192(e)",
   "group": "state",
   "url": "https://www.hazwoperosha.com/courses/cal-osha-40-hour-hazwoper-training/"
  },
  {
-  "slug": "osha-40-hour-hazwoper-for-construction-contaminated-sites",
-  "name": "OSHA 40 Hour HAZWOPER for Construction (Contaminated Sites)",
-  "price": 249.99,
-  "duration": "40 Hours",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "industry",
-  "url": "https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-construction-contaminated-sites/"
- },
- {
-  "slug": "osha-40-hour-hazwoper-for-emergency-response-fire-hazmat-teams",
-  "name": "OSHA 40 Hour HAZWOPER for Emergency Response/Fire-Hazmat Teams",
-  "price": 249.99,
-  "duration": "40 Hours",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "industry",
-  "url": "https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-emergency-response-fire-hazmat-teams/"
- },
- {
-  "slug": "osha-40-hour-hazwoper-for-environmental-remediation",
-  "name": "OSHA 40 Hour HAZWOPER for Environmental Remediation",
-  "price": 249.99,
-  "duration": "40 Hours",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "industry",
-  "url": "https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-environmental-remediation/"
- },
- {
-  "slug": "osha-40-hour-hazwoper-for-oil-and-gas-spill-response",
-  "name": "OSHA 40 Hour HAZWOPER for Oil & Gas Spill Response",
-  "price": 249.99,
-  "duration": "40 Hours",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "spill",
-  "url": "https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-oil-and-gas-spill-response/"
- },
- {
-  "slug": "osha-40-hour-hazwoper-for-utility-pipeline-emergency-response",
-  "name": "OSHA 40 Hour HAZWOPER for Utility/Pipeline Emergency Response",
-  "price": 249.99,
-  "duration": "40 Hours",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "industry",
-  "url": "https://www.hazwoperosha.com/courses/osha-40-hour-hazwoper-for-utility-pipeline-emergency-response/"
- },
- {
-  "slug": "cal-osha-24-hour-hazwoper-tsdf-rcra-training",
-  "name": "Cal/OSHA 24 hour HAZWOPER TSDF RCRA Training",
-  "price": 249.99,
-  "duration": "24 Hours",
-  "citation": "8 CCR 5192(p) / RCRA",
-  "group": "state",
-  "url": "https://www.hazwoperosha.com/courses/cal-osha-24-hour-hazwoper-tsdf-rcra-training/"
- },
- {
   "slug": "cal-osha-24-hour-hazwoper-training",
   "name": "Cal/OSHA 24-Hour HAZWOPER Training",
-  "price": 169.99,
+  "price": 189.99,
   "duration": "24 Hours",
   "citation": "8 CCR 5192(e)",
   "group": "state",
@@ -137,7 +83,7 @@
  {
   "slug": "osha-hazwoper-and-rcra-hazardous-waste-management-technician-safety-training",
   "name": "OSHA HAZWOPER and RCRA Hazardous Waste Management Technician Safety Training",
-  "price": 199.99,
+  "price": 349.99,
   "duration": "24 Hours",
   "citation": "29 CFR 1910.120 / RCRA",
   "group": "rcra",
@@ -146,47 +92,20 @@
  {
   "slug": "8-hour-hazwoper-and-incident-command-refresher-training",
   "name": "8 Hour HAZWOPER and Incident Command Refresher Training",
-  "price": 159.99,
+  "price": 249.99,
   "duration": "8 Hours",
   "citation": "29 CFR 1910.120(q)(8)",
   "group": "refresher",
   "url": "https://www.hazwoperosha.com/courses/8-hour-hazwoper-and-incident-command-refresher-training/"
  },
  {
-  "slug": "8-hour-hazwoper-refresher-state-plan-versions-available",
-  "name": "8 Hour HAZWOPER Refresher - State-Plan Versions Available",
-  "price": 84.99,
-  "duration": "8 Hours",
-  "citation": "State-plan equivalents of federal OSHA standard (see parent course)",
-  "group": "state",
-  "url": "https://www.hazwoperosha.com/courses/8-hour-hazwoper-refresher-state-plan-versions-available/"
- },
- {
   "slug": "cal-osha-8-hour-hazwoper-refresher-training",
   "name": "Cal/OSHA 8-Hour HAZWOPER Refresher Training",
-  "price": 89.99,
+  "price": 149.99,
   "duration": "8 Hours",
   "citation": "8 CCR 5192(e)(8)",
   "group": "state",
   "url": "https://www.hazwoperosha.com/courses/cal-osha-8-hour-hazwoper-refresher-training/"
- },
- {
-  "slug": "cal-osha-8-hour-hazwoper-tsdf-rcra-refresher-training",
-  "name": "Cal/OSHA 8-hour HAZWOPER TSDF RCRA Refresher Training",
-  "price": 109.99,
-  "duration": "8 Hours",
-  "citation": "8 CCR 5192(p)(8) / RCRA",
-  "group": "state",
-  "url": "https://www.hazwoperosha.com/courses/cal-osha-8-hour-hazwoper-tsdf-rcra-refresher-training/"
- },
- {
-  "slug": "epa-rcra-dot-combined-hazardous-materials-compliance-training",
-  "name": "EPA RCRA/DOT Combined Hazardous Materials Compliance Training",
-  "price": 149.99,
-  "duration": "8 Hours",
-  "citation": "RCRA + 49 CFR 172",
-  "group": "rcra",
-  "url": "https://www.hazwoperosha.com/courses/epa-rcra-dot-combined-hazardous-materials-compliance-training/"
  },
  {
   "slug": "manufacturing-emergency-response-team-ert-training",
@@ -200,7 +119,7 @@
  {
   "slug": "osha-8-hour-hazwoper-q-incident-command-training",
   "name": "OSHA 8 Hour HAZWOPER (q) Incident Command Training",
-  "price": 179.99,
+  "price": 199.99,
   "duration": "8 Hours",
   "citation": "29 CFR 1910.120(q)",
   "group": "refresher",
@@ -209,7 +128,7 @@
  {
   "slug": "osha-8-hour-hazwoper-annual-refresher-rcra-tsd-operations-training",
   "name": "OSHA 8 Hour HAZWOPER Annual Refresher - RCRA TSD Operations Training",
-  "price": 99.99,
+  "price": 89.99,
   "duration": "8 Hours",
   "citation": "29 CFR 1910.120(p)(8) / RCRA",
   "group": "rcra",
@@ -218,7 +137,7 @@
  {
   "slug": "osha-8-hour-hazwoper-supervisor-refresher-training",
   "name": "OSHA 8 Hour HAZWOPER Supervisor Refresher Training",
-  "price": 149.99,
+  "price": 69.99,
   "duration": "8 Hours",
   "citation": "29 CFR 1910.120(e)(4)/(e)(8)",
   "group": "refresher",
@@ -227,7 +146,7 @@
  {
   "slug": "osha-8-hour-hazwoper-supervisor-training",
   "name": "OSHA 8 Hour HAZWOPER Supervisor Training",
-  "price": 179.99,
+  "price": 69.99,
   "duration": "8 Hours",
   "citation": "29 CFR 1910.120(e)(4)",
   "group": "refresher",
@@ -236,7 +155,7 @@
  {
   "slug": "osha-8-hour-hazwoper-and-safe-ammonia-handling-refresher-training",
   "name": "OSHA 8-Hour HAZWOPER and Safe Ammonia Handling Refresher Training",
-  "price": 109.99,
+  "price": 89.99,
   "duration": "8 Hours",
   "citation": "29 CFR 1910.120(e)(8) / 1910.111",
   "group": "refresher",
@@ -245,20 +164,11 @@
  {
   "slug": "rcra-hazardous-waste-generator-training",
   "name": "RCRA Hazardous Waste Generator Training",
-  "price": 89.99,
+  "price": 134.99,
   "duration": "8 Hours",
   "citation": "40 CFR 262.17 (RCRA)",
   "group": "rcra",
   "url": "https://www.hazwoperosha.com/courses/rcra-hazardous-waste-generator-training/"
- },
- {
-  "slug": "cal-osha-rcra-hazardous-waste-training",
-  "name": "Cal/OSHA RCRA Hazardous Waste Training",
-  "price": 49.99,
-  "duration": "4 Hours",
-  "citation": "22 CCR Div. 4.5 / 40 CFR 262.17 / 8 CCR 5192",
-  "group": "state",
-  "url": "https://www.hazwoperosha.com/courses/cal-osha-rcra-hazardous-waste-training/"
  },
  {
   "slug": "hazardous-waste-contingency-plan-and-emergency-coordinator-training",
@@ -272,7 +182,7 @@
  {
   "slug": "rcra-hazardous-waste-generator-refresher-training",
   "name": "RCRA Hazardous Waste Generator Refresher Training",
-  "price": 59.99,
+  "price": 124.99,
   "duration": "4 Hours",
   "citation": "40 CFR 262.17 (RCRA, annual)",
   "group": "rcra",
@@ -281,7 +191,7 @@
  {
   "slug": "hazardous-waste-manifest-training",
   "name": "Hazardous Waste Manifest Training",
-  "price": 34.99,
+  "price": 58.99,
   "duration": "2 Hours",
   "citation": "40 CFR 262 Subpart B (RCRA)",
   "group": "rcra",
@@ -308,7 +218,7 @@
  {
   "slug": "osha-spill-prevention-and-response-safety-training",
   "name": "OSHA Spill Prevention and Response Safety Training",
-  "price": 49.99,
+  "price": 29.99,
   "duration": "2 Hours",
   "citation": "29 CFR 1910.120 / 40 CFR 112",
   "group": "spill",
@@ -322,59 +232,5 @@
   "citation": "40 CFR 273 (RCRA)",
   "group": "rcra",
   "url": "https://www.hazwoperosha.com/courses/rcra-universal-waste-handler-training/"
- },
- {
-  "slug": "spill-response-equipment-absorbent-and-containment-booms",
-  "name": "Spill Response Equipment - Absorbent & Containment Booms",
-  "price": 24.99,
-  "duration": "1 Hour",
-  "citation": "40 CFR 112 / 29 CFR 1910.120",
-  "group": "spill",
-  "url": "https://www.hazwoperosha.com/courses/spill-response-equipment-absorbent-and-containment-booms/"
- },
- {
-  "slug": "spill-response-equipment-spill-kit-selection-and-use",
-  "name": "Spill Response Equipment - Spill Kit Selection & Use",
-  "price": 24.99,
-  "duration": "1 Hour",
-  "citation": "40 CFR 112 / 29 CFR 1910.120",
-  "group": "spill",
-  "url": "https://www.hazwoperosha.com/courses/spill-response-equipment-spill-kit-selection-and-use/"
- },
- {
-  "slug": "hazwoper-micro-module-air-monitoring-and-direct-reading-instruments",
-  "name": "HAZWOPER Micro-Module: Air Monitoring & Direct-Reading Instruments",
-  "price": 14.99,
-  "duration": "20 Min",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "spill",
-  "url": "https://www.hazwoperosha.com/courses/hazwoper-micro-module-air-monitoring-and-direct-reading-instruments/"
- },
- {
-  "slug": "hazwoper-micro-module-decontamination-procedures",
-  "name": "HAZWOPER Micro-Module: Decontamination Procedures",
-  "price": 14.99,
-  "duration": "20 Min",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "spill",
-  "url": "https://www.hazwoperosha.com/courses/hazwoper-micro-module-decontamination-procedures/"
- },
- {
-  "slug": "hazwoper-micro-module-site-characterization-and-hazard-assessment",
-  "name": "HAZWOPER Micro-Module: Site Characterization & Hazard Assessment",
-  "price": 14.99,
-  "duration": "20 Min",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "spill",
-  "url": "https://www.hazwoperosha.com/courses/hazwoper-micro-module-site-characterization-and-hazard-assessment/"
- },
- {
-  "slug": "hazwoper-micro-module-ppe-levels-a-b-c-and-d-explained",
-  "name": "HAZWOPER Micro-Module: PPE Levels A, B, C & D Explained",
-  "price": 12.99,
-  "duration": "15 Min",
-  "citation": "29 CFR 1910.120(e) / 1926.65(e)",
-  "group": "spill",
-  "url": "https://www.hazwoperosha.com/courses/hazwoper-micro-module-ppe-levels-a-b-c-and-d-explained/"
  }
 ]
